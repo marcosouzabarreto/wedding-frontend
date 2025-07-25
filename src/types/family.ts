@@ -65,3 +65,4 @@ export const mockFamilies: Family[] = [
       { id: '3-2', name: 'Elena', familyName: 'Santos', isMainContact: false, attending: true, dietaryRestrictions: 'Sem glúten' },
     ]
   }
+]
