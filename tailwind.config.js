@@ -24,6 +24,7 @@ export default {
         "bounce-gentle": "bounceGentle 2s infinite",
         "pulse-soft": "pulseSoft 2s infinite",
         flip: "flip 0.6s ease-out forwards",
+        "pop-in": "popIn 0.3s ease-out forwards",
       },
       keyframes: {
         fadeIn: {
@@ -46,6 +47,10 @@ export default {
         pulseSoft: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
+        },
+        popIn: {
+          "0%": { transform: "scale(0.8)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
         },
       },
     },

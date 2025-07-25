@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Heart, Calendar, MapPin, Clock } from "lucide-react";
 import Countdown from "../components/Countdown";
+import PhotoCarousel from "../components/PhotoCarousel";
 
 const HomePage = () => {
   const weddingDate = new Date("2025-12-06T16:00:00");
@@ -11,6 +12,19 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
+      {/* Hero Photo Section */}
+      <section className="relative py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8 animate-fade-in">
+            <img
+              src="https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=1200"
+              alt="Marco & Lavinia"
+              className="w-full max-w-2xl mx-auto h-64 md:h-80 object-cover rounded-3xl shadow-2xl"
+            />
+          </div>
+        </div>
+      </section>
+
       <section className="relative py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="animate-fade-in">
@@ -70,6 +84,23 @@ const HomePage = () => {
                 onComplete={() => setIsCountdownFinished(true)}
               />
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Photo Carousel Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-4">
+              Nossa Jornada Juntos
+            </h2>
+            <p className="text-lg text-wedding-dark max-w-2xl mx-auto">
+              Momentos especiais que marcaram nossa história de amor
+            </p>
+          </div>
+          <div className="animate-slide-up">
+            <PhotoCarousel />
           </div>
         </div>
       </section>
