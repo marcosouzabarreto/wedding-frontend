@@ -25,6 +25,9 @@ export default {
         "pulse-soft": "pulseSoft 2s infinite",
         flip: "flip 0.6s ease-out forwards",
         "pop-in": "popIn 0.3s ease-out forwards",
+        "slide-in-right": "slideInRight 0.5s ease-out forwards",
+        "slide-in-left": "slideInLeft 0.5s ease-out forwards",
+        "zoom-in": "zoomIn 0.5s ease-out forwards",
       },
       keyframes: {
         fadeIn: {
@@ -50,6 +53,18 @@ export default {
         },
         popIn: {
           "0%": { transform: "scale(0.8)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        slideInRight: {
+          "0%": { transform: "translateX(100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        slideInLeft: {
+          "0%": { transform: "translateX(-100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        zoomIn: {
+          "0%": { transform: "scale(0.9)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
       },

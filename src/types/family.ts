@@ -13,6 +13,11 @@ export interface Family {
   token: string;
   members: FamilyMember[];
   maxGuests: number;
+  contactInfo?: {
+    email: string;
+    phone: string;
+    message: string;
+  };
 }
 
 // Mock family data - in a real app, this would come from your backend
@@ -22,11 +27,16 @@ export const mockFamilies: Family[] = [
     familyName: 'Barreto',
     token: 'BARRETO2025',
     maxGuests: 4,
+    contactInfo: {
+      email: 'marco.barreto@email.com',
+      phone: '(11) 99999-9999',
+      message: 'Mal podemos esperar para celebrar com vocês!'
+    },
     members: [
-      { id: '1-1', name: 'Marco', familyName: 'Barreto', isMainContact: true },
-      { id: '1-2', name: 'Ana', familyName: 'Barreto', isMainContact: false },
+      { id: '1-1', name: 'Marco', familyName: 'Barreto', isMainContact: true, attending: true },
+      { id: '1-2', name: 'Ana', familyName: 'Barreto', isMainContact: false, attending: true, dietaryRestrictions: 'Vegetariana' },
       { id: '1-3', name: 'João', familyName: 'Barreto', isMainContact: false },
-      { id: '1-4', name: 'Maria', familyName: 'Barreto', isMainContact: false },
+      { id: '1-4', name: 'Maria', familyName: 'Barreto', isMainContact: false, attending: false },
     ]
   },
   {
@@ -45,9 +55,13 @@ export const mockFamilies: Family[] = [
     familyName: 'Santos',
     token: 'SANTOS2025',
     maxGuests: 2,
+    contactInfo: {
+      email: 'roberto.santos@email.com',
+      phone: '(21) 88888-8888',
+      message: 'Obrigado pelo convite!'
+    },
     members: [
-      { id: '3-1', name: 'Roberto', familyName: 'Santos', isMainContact: true },
-      { id: '3-2', name: 'Elena', familyName: 'Santos', isMainContact: false },
+      { id: '3-1', name: 'Roberto', familyName: 'Santos', isMainContact: true, attending: true },
+      { id: '3-2', name: 'Elena', familyName: 'Santos', isMainContact: false, attending: true, dietaryRestrictions: 'Sem glúten' },
     ]
   }
-];

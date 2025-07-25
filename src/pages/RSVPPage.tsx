@@ -15,6 +15,7 @@ const RSVPPage = () => {
   const [tokenError, setTokenError] = useState('');
   const [currentFamily, setCurrentFamily] = useState<Family | null>(null);
   const [selectedMembers, setSelectedMembers] = useState<FamilyMember[]>([]);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [formData, setFormData] = useState<RSVPFormData>({
     email: '',
     phone: '',
@@ -32,6 +33,36 @@ const RSVPPage = () => {
     if (family) {
       setCurrentFamily(family);
       setTokenError('');
+      
+      // Check if this family has already submitted an RSVP
+      const existingAttendees = family.members.filter(member => member.attending === true);
+      const hasExistingRSVP = existingAttendees.length > 0 || family.contactInfo;
+      
+      if (hasExistingRSVP) {
+        setIsUpdating(true);
+        // Pre-fill selected members with existing attendees
+        setSelectedMembers(existingAttendees.map(member => ({ ...member })));
+        
+        // Pre-fill contact information if available
+        if (family.contactInfo) {
+          setFormData(prev => ({
+            ...prev,
+            email: family.contactInfo?.email || '',
+            phone: family.contactInfo?.phone || '',
+            message: family.contactInfo?.message || ''
+          }));
+        }
+      } else {
+        setIsUpdating(false);
+        setSelectedMembers([]);
+        setFormData({
+          email: '',
+          phone: '',
+          message: '',
+          attendingMembers: []
+        });
+      }
+      
       setStep('selection');
     } else {
       setTokenError('Token da família inválido. Por favor, verifique e tente novamente.');
@@ -89,10 +120,42 @@ const RSVPPage = () => {
     e.preventDefault();
     
     if (validateForm()) {
+      // Update the mock data to simulate saving changes
+      if (currentFamily) {
+        const familyIndex = mockFamilies.findIndex(f => f.id === currentFamily.id);
+        if (familyIndex !== -1) {
+          // Update family contact info
+          mockFamilies[familyIndex].contactInfo = {
+            email: formData.email,
+            phone: formData.phone,
+            message: formData.message
+          };
+          
+          // Update member attendance status
+          mockFamilies[familyIndex].members = mockFamilies[familyIndex].members.map(member => {
+            const selectedMember = selectedMembers.find(sm => sm.id === member.id);
+            if (selectedMember) {
+              return {
+                ...member,
+                attending: true,
+                dietaryRestrictions: selectedMember.dietaryRestrictions
+              };
+            } else {
+              return {
+                ...member,
+                attending: false,
+                dietaryRestrictions: undefined
+              };
+            }
+          });
+        }
+      }
+      
       const finalData = {
         ...formData,
         attendingMembers: selectedMembers,
-        family: currentFamily?.familyName
+        family: currentFamily?.familyName,
+        isUpdate: isUpdating
       };
       
       console.log('RSVP submitted:', finalData);
@@ -106,6 +169,7 @@ const RSVPPage = () => {
     setTokenError('');
     setCurrentFamily(null);
     setSelectedMembers([]);
+    setIsUpdating(false);
     setFormData({
       email: '',
       phone: '',
@@ -123,10 +187,10 @@ const RSVPPage = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl">
             <Heart className="h-16 w-16 text-wedding-primary mx-auto mb-6 animate-bounce-gentle" />
             <h2 className="text-3xl font-semibold text-wedding-primary mb-4">
-              Obrigado!
+              {isUpdating ? 'RSVP Atualizado!' : 'Obrigado!'}
             </h2>
             <p className="text-wedding-dark text-lg mb-6">
-              Seu RSVP foi recebido para a família {currentFamily?.familyName}. 
+              Seu RSVP foi {isUpdating ? 'atualizado' : 'recebido'} para a família {currentFamily?.familyName}. 
               Mal podemos esperar para celebrar com vocês!
             </p>
             <div className="text-sm text-wedding-dark mb-6">
@@ -210,7 +274,7 @@ const RSVPPage = () => {
             <div className="mt-8 p-4 bg-wedding-secondary/20 rounded-xl">
               <p className="text-sm text-wedding-dark text-center">
                 <strong>Tokens de exemplo para teste:</strong><br />
-                BARRETO2025, SILVA2025, SANTOS2025
+                BARRETO2025 (já tem RSVP), SILVA2025 (novo), SANTOS2025 (já tem RSVP)
               </p>
             </div>
           </form>
@@ -223,15 +287,21 @@ const RSVPPage = () => {
               <Users className="h-12 w-12 text-wedding-primary mx-auto mb-4" />
               <h2 className="text-2xl font-semibold text-wedding-primary mb-2">
                 Família {currentFamily.familyName}
+                {isUpdating && (
+                  <span className="block text-sm text-wedding-accent mt-1">
+                    (Atualizando RSVP existente)
+                  </span>
+                )}
               </h2>
               <p className="text-wedding-dark">
-                Selecione os membros da família que estarão presentes
+                {isUpdating ? 'Atualize' : 'Selecione'} os membros da família que estarão presentes
               </p>
             </div>
 
             <div className="space-y-4 mb-8">
               {currentFamily.members.map((member) => {
                 const isSelected = selectedMembers.some(m => m.id === member.id);
+                const selectedMember = selectedMembers.find(m => m.id === member.id);
                 return (
                   <div
                     key={member.id}
@@ -269,7 +339,7 @@ const RSVPPage = () => {
                         </label>
                         <input
                           type="text"
-                          value={member.dietaryRestrictions || ''}
+                          value={selectedMember?.dietaryRestrictions || ''}
                           onChange={(e) => updateMemberDietaryRestrictions(member.id, e.target.value)}
                           className="w-full px-3 py-2 border border-wedding-primary/30 rounded-lg focus:border-wedding-primary focus:outline-none"
                           placeholder="Ex: Vegetariano, alergia a nozes..."
@@ -311,7 +381,7 @@ const RSVPPage = () => {
                 Informações de Contato
               </h2>
               <p className="text-wedding-dark">
-                Finalize seu RSVP com suas informações de contato
+                {isUpdating ? 'Atualize suas' : 'Finalize seu RSVP com suas'} informações de contato
               </p>
             </div>
 
@@ -401,7 +471,7 @@ const RSVPPage = () => {
                   className="flex-1 bg-wedding-primary text-white py-4 rounded-xl text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
                 >
                   <Send className="h-5 w-5" />
-                  <span>Enviar RSVP</span>
+                  <span>{isUpdating ? 'Atualizar' : 'Enviar'} RSVP</span>
                 </button>
               </div>
             </div>
