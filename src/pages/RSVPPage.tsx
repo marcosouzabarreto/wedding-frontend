@@ -27,23 +27,20 @@ const RSVPPage = () => {
 
   const handleTokenSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const family = mockFamilies.find(f => f.token.toUpperCase() === familyToken.toUpperCase());
-    
+
     if (family) {
       setCurrentFamily(family);
       setTokenError('');
-      
-      // Check if this family has already submitted an RSVP
+
       const existingAttendees = family.members.filter(member => member.attending === true);
       const hasExistingRSVP = existingAttendees.length > 0 || family.contactInfo;
-      
+
       if (hasExistingRSVP) {
         setIsUpdating(true);
-        // Pre-fill selected members with existing attendees
         setSelectedMembers(existingAttendees.map(member => ({ ...member })));
-        
-        // Pre-fill contact information if available
+
         if (family.contactInfo) {
           setFormData(prev => ({
             ...prev,
@@ -62,7 +59,7 @@ const RSVPPage = () => {
           attendingMembers: []
         });
       }
-      
+
       setStep('selection');
     } else {
       setTokenError('Token da família inválido. Por favor, verifique e tente novamente.');
@@ -81,9 +78,9 @@ const RSVPPage = () => {
   };
 
   const updateMemberDietaryRestrictions = (memberId: string, dietary: string) => {
-    setSelectedMembers(prev => 
-      prev.map(member => 
-        member.id === memberId 
+    setSelectedMembers(prev =>
+      prev.map(member =>
+        member.id === memberId
           ? { ...member, dietaryRestrictions: dietary }
           : member
       )
@@ -96,7 +93,7 @@ const RSVPPage = () => {
       ...prev,
       [name]: value
     }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -107,18 +104,18 @@ const RSVPPage = () => {
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
-    
+
     if (!formData.email.trim()) newErrors.email = 'Email é obrigatório';
     if (!formData.email.includes('@')) newErrors.email = 'Por favor, insira um email válido';
     if (selectedMembers.length === 0) newErrors.members = 'Selecione pelo menos um membro da família';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       // Update the mock data to simulate saving changes
       if (currentFamily) {
@@ -130,7 +127,7 @@ const RSVPPage = () => {
             phone: formData.phone,
             message: formData.message
           };
-          
+
           // Update member attendance status
           mockFamilies[familyIndex].members = mockFamilies[familyIndex].members.map(member => {
             const selectedMember = selectedMembers.find(sm => sm.id === member.id);
@@ -150,14 +147,14 @@ const RSVPPage = () => {
           });
         }
       }
-      
+
       const finalData = {
         ...formData,
         attendingMembers: selectedMembers,
         family: currentFamily?.familyName,
         isUpdate: isUpdating
       };
-      
+
       console.log('RSVP submitted:', finalData);
       setSubmitted(true);
     }
@@ -190,7 +187,7 @@ const RSVPPage = () => {
               {isUpdating ? 'RSVP Atualizado!' : 'Obrigado!'}
             </h2>
             <p className="text-wedding-dark text-lg mb-6">
-              Seu RSVP foi {isUpdating ? 'atualizado' : 'recebido'} para a família {currentFamily?.familyName}. 
+              Seu RSVP foi {isUpdating ? 'atualizado' : 'recebido'} para a família {currentFamily?.familyName}.
               Mal podemos esperar para celebrar com vocês!
             </p>
             <div className="text-sm text-wedding-dark mb-6">
@@ -254,8 +251,8 @@ const RSVPPage = () => {
                     setTokenError('');
                   }}
                   className={`w-full px-4 py-3 border-2 rounded-xl text-center text-lg font-mono transition-all duration-300 ${
-                    tokenError 
-                      ? 'border-red-400 focus:border-red-400' 
+                    tokenError
+                      ? 'border-red-400 focus:border-red-400'
                       : 'border-wedding-primary/30 hover:border-wedding-primary/60 focus:border-wedding-primary'
                   } focus:outline-none`}
                   placeholder="Ex: BARRETO2025"
@@ -315,8 +312,8 @@ const RSVPPage = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                          isSelected 
-                            ? 'border-wedding-primary bg-wedding-primary' 
+                          isSelected
+                            ? 'border-wedding-primary bg-wedding-primary'
                             : 'border-wedding-primary/30'
                         }`}>
                           {isSelected && <Check className="h-4 w-4 text-white" />}
@@ -413,8 +410,8 @@ const RSVPPage = () => {
                     value={formData.email}
                     onChange={handleFormChange}
                     className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl transition-all duration-300 ${
-                      errors.email 
-                        ? 'border-red-400 focus:border-red-400' 
+                      errors.email
+                        ? 'border-red-400 focus:border-red-400'
                         : 'border-wedding-primary/30 hover:border-wedding-primary/60 focus:border-wedding-primary'
                     } focus:outline-none`}
                     placeholder="Digite seu endereço de email"

@@ -20,7 +20,6 @@ export interface Family {
   };
 }
 
-// Mock family data - in a real app, this would come from your backend
 export const mockFamilies: Family[] = [
   {
     id: '1',
@@ -33,10 +32,10 @@ export const mockFamilies: Family[] = [
       message: 'Mal podemos esperar para celebrar com vocês!'
     },
     members: [
-      { id: '1-1', name: 'Marco', familyName: 'Barreto', isMainContact: true, attending: true },
-      { id: '1-2', name: 'Ana', familyName: 'Barreto', isMainContact: false, attending: true, dietaryRestrictions: 'Vegetariana' },
+      { id: '1-1', name: 'Marco Aurelio', familyName: 'Barreto', isMainContact: true, attending: true },
+      { id: '1-2', name: 'Viviane', familyName: 'Barreto', isMainContact: false, attending: true, dietaryRestrictions: 'Vegetariana' },
       { id: '1-3', name: 'João', familyName: 'Barreto', isMainContact: false },
-      { id: '1-4', name: 'Maria', familyName: 'Barreto', isMainContact: false, attending: false },
+      { id: '1-4', name: 'Marco Antonio', familyName: 'Barreto', isMainContact: false, attending: true },
     ]
   },
   {
