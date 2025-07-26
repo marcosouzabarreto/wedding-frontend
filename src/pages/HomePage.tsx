@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Heart, Calendar, MapPin, Clock } from "lucide-react";
 import Countdown from "../components/Countdown";
 import PhotoCarousel from "../components/PhotoCarousel";
+import PhotoGallery from "../components/PhotoGallery";
+import WeddingPartyCarousel from "../components/WeddingPartyCarousel";
 
 const HomePage = () => {
   const weddingDate = new Date("2025-12-06T16:00:00");
@@ -101,6 +103,40 @@ const HomePage = () => {
           </div>
           <div className="animate-slide-up">
             <PhotoCarousel />
+          </div>
+        </div>
+      </section>
+
+      {/* Photo Gallery Section */}
+      <section className="py-16 px-4 bg-white/40 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-4">
+              Nossa Galeria de Memórias
+            </h2>
+            <p className="text-lg text-wedding-dark max-w-2xl mx-auto">
+              Uma jornada através dos anos, desde a infância até nos tornarmos o casal que somos hoje
+            </p>
+          </div>
+          <div className="animate-slide-up">
+            <PhotoGallery />
+          </div>
+        </div>
+      </section>
+
+      {/* Wedding Party Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-4">
+              Nossos Padrinhos e Madrinhas
+            </h2>
+            <p className="text-lg text-wedding-dark max-w-2xl mx-auto">
+              As pessoas especiais que escolhemos para estar ao nosso lado neste momento único
+            </p>
+          </div>
+          <div className="animate-slide-up">
+            <WeddingPartyCarousel />
           </div>
         </div>
       </section>

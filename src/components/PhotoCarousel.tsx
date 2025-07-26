@@ -10,7 +10,6 @@ interface Photo {
 const PhotoCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Placeholder photos - these can be replaced with actual couple photos
   const photos: Photo[] = [
@@ -37,15 +36,8 @@ const PhotoCarousel = () => {
   ];
 
   const changeSlide = (newIndex: number) => {
-    if (isTransitioning || newIndex === currentIndex) return;
-    
-    setIsTransitioning(true);
+    if (newIndex === currentIndex) return;
     setCurrentIndex(newIndex);
-    
-    // Reset transition state after animation completes
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500);
   };
 
   const nextSlide = () => {
@@ -64,14 +56,14 @@ const PhotoCarousel = () => {
 
   // Auto-play functionality
   useEffect(() => {
-    if (!isAutoPlaying || isTransitioning) return;
+    if (!isAutoPlaying) return;
 
     const interval = setInterval(() => {
       nextSlide();
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, isAutoPlaying, isTransitioning]);
+  }, [currentIndex, isAutoPlaying]);
 
   return (
     <div className="relative max-w-4xl mx-auto">
@@ -81,27 +73,19 @@ const PhotoCarousel = () => {
         onMouseLeave={() => setIsAutoPlaying(true)}
       >
         {/* Main Image */}
-        <div className={`relative w-full h-full transition-all duration-500 ease-in-out ${
-          isTransitioning ? 'transform scale-105' : 'transform scale-100'
-        }`}>
+        <div className="relative w-full h-full">
           <img
             src={photos[currentIndex].url}
             alt={photos[currentIndex].caption}
-            className={`w-full h-full object-cover transition-all duration-500 ease-in-out ${
-              isTransitioning ? 'opacity-0 transform scale-110' : 'opacity-100 transform scale-100'
-            }`}
+            className="w-full h-full object-cover transition-opacity duration-500 ease-in-out"
             key={currentIndex}
           />
           
           {/* Gradient Overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent transition-opacity duration-500 ${
-            isTransitioning ? 'opacity-0' : 'opacity-100'
-          }`} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
           
           {/* Caption */}
-          <div className={`absolute bottom-6 left-6 right-6 text-center transition-all duration-500 ease-in-out ${
-            isTransitioning ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
-          }`}>
+          <div className="absolute bottom-6 left-6 right-6 text-center">
             <p className="text-white text-lg md:text-xl font-medium bg-black/30 backdrop-blur-sm rounded-full px-6 py-3">
               {photos[currentIndex].caption}
             </p>
@@ -111,24 +95,20 @@ const PhotoCarousel = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          disabled={isTransitioning}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
         
         <button
           onClick={nextSlide}
-          disabled={isTransitioning}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
         >
           <ChevronRight className="h-6 w-6" />
         </button>
 
         {/* Heart Icon Overlay */}
-        <div className={`absolute top-6 right-6 transition-all duration-500 ${
-          isTransitioning ? 'opacity-0 transform rotate-12 scale-75' : 'opacity-80 transform rotate-0 scale-100'
-        }`}>
+        <div className="absolute top-6 right-6 opacity-80">
           <Heart className="h-8 w-8 text-white/80 fill-current animate-pulse-soft" />
         </div>
       </div>
@@ -139,8 +119,7 @@ const PhotoCarousel = () => {
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            disabled={isTransitioning}
-            className={`w-3 h-3 rounded-full transition-all duration-300 disabled:cursor-not-allowed ${
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
               index === currentIndex
                 ? 'bg-wedding-primary scale-125 shadow-lg'
                 : 'bg-wedding-primary/30 hover:bg-wedding-primary/60'
@@ -150,24 +129,21 @@ const PhotoCarousel = () => {
       </div>
 
       {/* Thumbnail Strip */}
-      <div className="flex justify-center mt-4 space-x-2 overflow-x-auto pb-2">
+      <div className="flex justify-center mt-4 space-x-2 overflow-x-auto pb-2 px-4">
         {photos.map((photo, index) => (
           <button
             key={photo.id}
             onClick={() => goToSlide(index)}
-            disabled={isTransitioning}
-            className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden transition-all duration-300 disabled:cursor-not-allowed ${
+            className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden transition-all duration-300 ${
               index === currentIndex
-                ? 'ring-4 ring-wedding-primary scale-110 shadow-xl'
+                ? 'ring-4 ring-wedding-primary shadow-xl'
                 : 'opacity-60 hover:opacity-100'
             }`}
           >
             <img
               src={photo.url}
               alt={photo.caption}
-              className={`w-full h-full object-cover transition-all duration-300 ${
-                index === currentIndex ? 'brightness-110' : 'brightness-90'
-              }`}
+              className="w-full h-full object-cover transition-all duration-300"
             />
           </button>
         ))}
