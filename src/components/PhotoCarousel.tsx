@@ -10,6 +10,7 @@ interface Photo {
 const PhotoCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Placeholder photos - these can be replaced with actual couple photos
   const photos: Photo[] = [
@@ -37,7 +38,9 @@ const PhotoCarousel = () => {
 
   const changeSlide = (newIndex: number) => {
     if (newIndex === currentIndex) return;
+    setIsTransitioning(true);
     setCurrentIndex(newIndex);
+    setTimeout(() => setIsTransitioning(false), 500);
   };
 
   const nextSlide = () => {
@@ -68,18 +71,26 @@ const PhotoCarousel = () => {
   return (
     <div className="relative max-w-4xl mx-auto">
       <div 
-        className="relative h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl"
+        className="relative h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-black"
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
       >
         {/* Main Image */}
-        <div className="relative w-full h-full">
-          <img
-            src={photos[currentIndex].url}
-            alt={photos[currentIndex].caption}
-            className="w-full h-full object-cover transition-opacity duration-500 ease-in-out"
-            key={currentIndex}
-          />
+        <div className="relative w-full h-full overflow-hidden">
+          <div 
+            className="flex w-full h-full transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {photos.map((photo, index) => (
+              <div key={photo.id} className="w-full h-full flex-shrink-0">
+                <img
+                  src={photo.url}
+                  alt={photo.caption}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
           
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -134,16 +145,16 @@ const PhotoCarousel = () => {
           <button
             key={photo.id}
             onClick={() => goToSlide(index)}
-            className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden transition-all duration-300 ${
+            className={`flex-shrink-0 rounded-xl overflow-hidden transition-all duration-300 ${
               index === currentIndex
-                ? 'ring-4 ring-wedding-primary shadow-xl'
-                : 'opacity-60 hover:opacity-100'
+                ? 'ring-4 ring-wedding-primary shadow-xl w-20 h-20 md:w-24 md:h-24 scale-110'
+                : 'opacity-60 hover:opacity-100 w-16 h-16 md:w-20 md:h-20'
             }`}
           >
             <img
               src={photo.url}
               alt={photo.caption}
-              className="w-full h-full object-cover transition-all duration-300"
+              className="w-full h-full object-cover"
             />
           </button>
         ))}
