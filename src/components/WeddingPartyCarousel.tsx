@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Heart, Users } from 'lucide-react';
+import { useState, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Heart, Users } from "lucide-react";
 
 interface WeddingPartyMember {
   id: number;
   name: string;
-  role: 'bestman' | 'maid';
+  role: "bestman" | "maid";
   photo: string;
   description: string;
   relationship: string;
@@ -20,107 +20,120 @@ const WeddingPartyCarousel = () => {
       id: 1,
       name: "Carlos Silva",
       role: "bestman",
-      photo: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400",
-      description: "Melhor amigo desde a infância, sempre presente nos momentos mais importantes.",
-      relationship: "Melhor amigo"
+      photo:
+        "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400",
+      description:
+        "Melhor amigo desde a infância, sempre presente nos momentos mais importantes.",
+      relationship: "Melhor amigo",
     },
     {
       id: 2,
       name: "Roberto Santos",
       role: "bestman",
-      photo: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Companheiro de faculdade e parceiro de aventuras.",
-      relationship: "Amigo da faculdade"
+      relationship: "Amigo da faculdade",
     },
     {
       id: 3,
       name: "João Oliveira",
       role: "bestman",
-      photo: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Irmão de coração, sempre disposto a ajudar.",
-      relationship: "Como um irmão"
+      relationship: "Como um irmão",
     },
     {
       id: 4,
       name: "Pedro Costa",
       role: "bestman",
-      photo: "https://images.pexels.com/photos/1043470/pexels-photo-1043470.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1043470/pexels-photo-1043470.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Colega de trabalho que se tornou grande amigo.",
-      relationship: "Amigo do trabalho"
+      relationship: "Amigo do trabalho",
     },
     {
       id: 5,
       name: "Lucas Ferreira",
       role: "bestman",
-      photo: "https://images.pexels.com/photos/1043469/pexels-photo-1043469.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1043469/pexels-photo-1043469.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Primo querido e confidente de todas as horas.",
-      relationship: "Primo"
+      relationship: "Primo",
     },
     {
       id: 6,
       name: "André Martins",
       role: "bestman",
-      photo: "https://images.pexels.com/photos/1024960/pexels-photo-1024960.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1024960/pexels-photo-1024960.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Amigo leal que conhece todos os segredos.",
-      relationship: "Amigo íntimo"
+      relationship: "Amigo íntimo",
     },
     // Maids of Honor
     {
       id: 7,
       name: "Ana Paula",
       role: "maid",
-      photo: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Melhor amiga desde sempre, irmã que a vida me deu.",
-      relationship: "Melhor amiga"
+      relationship: "Melhor amiga",
     },
     {
       id: 8,
       name: "Mariana Costa",
       role: "maid",
-      photo: "https://images.pexels.com/photos/1130623/pexels-photo-1130623.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1130623/pexels-photo-1130623.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Companheira de todas as aventuras e confidências.",
-      relationship: "Amiga da escola"
+      relationship: "Amiga da escola",
     },
     {
       id: 9,
       name: "Juliana Santos",
       role: "maid",
-      photo: "https://images.pexels.com/photos/1620653/pexels-photo-1620653.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1620653/pexels-photo-1620653.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Prima querida e conselheira de todas as horas.",
-      relationship: "Prima"
+      relationship: "Prima",
     },
     {
       id: 10,
       name: "Fernanda Lima",
       role: "maid",
-      photo: "https://images.pexels.com/photos/1620760/pexels-photo-1620760.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1620760/pexels-photo-1620760.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Amiga da faculdade que se tornou família.",
-      relationship: "Amiga da faculdade"
+      relationship: "Amiga da faculdade",
     },
     {
       id: 11,
       name: "Camila Rocha",
       role: "maid",
-      photo: "https://images.pexels.com/photos/1104007/pexels-photo-1104007.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1104007/pexels-photo-1104007.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Colega de trabalho e grande apoio em todos os momentos.",
-      relationship: "Amiga do trabalho"
+      relationship: "Amiga do trabalho",
     },
     {
       id: 12,
       name: "Beatriz Alves",
       role: "maid",
-      photo: "https://images.pexels.com/photos/1104014/pexels-photo-1104014.jpeg?auto=compress&cs=tinysrgb&w=400",
+      photo:
+        "https://images.pexels.com/photos/1104014/pexels-photo-1104014.jpeg?auto=compress&cs=tinysrgb&w=400",
       description: "Amiga especial que sempre traz alegria e bons conselhos.",
-      relationship: "Amiga querida"
-    }
+      relationship: "Amiga querida",
+    },
   ];
 
   const itemsPerSlide = 3;
   const totalSlides = Math.ceil(weddingParty.length / itemsPerSlide);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
-  };
+  }, [totalSlides]);
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
@@ -130,7 +143,6 @@ const WeddingPartyCarousel = () => {
     setCurrentIndex(index);
   };
 
-  // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying) return;
 
@@ -139,15 +151,10 @@ const WeddingPartyCarousel = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, isAutoPlaying]);
+  }, [currentIndex, isAutoPlaying, nextSlide]);
 
-  const getCurrentSlideMembers = () => {
-    const startIndex = currentIndex * itemsPerSlide;
-    return weddingParty.slice(startIndex, startIndex + itemsPerSlide);
-  };
-
-  const bestMen = weddingParty.filter(member => member.role === 'bestman');
-  const maids = weddingParty.filter(member => member.role === 'maid');
+  const bestMen = weddingParty.filter((member) => member.role === "bestman");
+  const maids = weddingParty.filter((member) => member.role === "maid");
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -171,14 +178,14 @@ const WeddingPartyCarousel = () => {
       </div>
 
       {/* Carousel Container */}
-      <div 
+      <div
         className="relative"
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
       >
         {/* Main Carousel */}
         <div className="overflow-hidden rounded-2xl">
-          <div 
+          <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
@@ -186,7 +193,10 @@ const WeddingPartyCarousel = () => {
               <div key={slideIndex} className="w-full flex-shrink-0">
                 <div className="grid md:grid-cols-3 gap-6 p-4">
                   {weddingParty
-                    .slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide)
+                    .slice(
+                      slideIndex * itemsPerSlide,
+                      (slideIndex + 1) * itemsPerSlide,
+                    )
                     .map((member) => (
                       <div
                         key={member.id}
@@ -200,12 +210,16 @@ const WeddingPartyCarousel = () => {
                             className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                           />
                           {/* Role Badge */}
-                          <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold text-white ${
-                            member.role === 'bestman' 
-                              ? 'bg-wedding-primary' 
-                              : 'bg-wedding-accent'
-                          }`}>
-                            {member.role === 'bestman' ? 'Padrinho' : 'Madrinha'}
+                          <div
+                            className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold text-white ${
+                              member.role === "bestman"
+                                ? "bg-wedding-primary"
+                                : "bg-wedding-accent"
+                            }`}
+                          >
+                            {member.role === "bestman"
+                              ? "Padrinho"
+                              : "Madrinha"}
                           </div>
                         </div>
 
@@ -236,7 +250,7 @@ const WeddingPartyCarousel = () => {
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
-        
+
         <button
           onClick={nextSlide}
           className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-wedding-primary p-3 rounded-full transition-all duration-300 hover:scale-110 z-10"
@@ -253,8 +267,8 @@ const WeddingPartyCarousel = () => {
             onClick={() => goToSlide(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
               index === currentIndex
-                ? 'bg-wedding-primary scale-125 shadow-lg'
-                : 'bg-wedding-primary/30 hover:bg-wedding-primary/60'
+                ? "bg-wedding-primary scale-125 shadow-lg"
+                : "bg-wedding-primary/30 hover:bg-wedding-primary/60"
             }`}
           />
         ))}
@@ -271,3 +285,4 @@ const WeddingPartyCarousel = () => {
 };
 
 export default WeddingPartyCarousel;
+

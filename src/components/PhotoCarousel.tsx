@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 
 interface Photo {
   id: number;
@@ -17,23 +17,23 @@ const PhotoCarousel = () => {
     {
       id: 1,
       url: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "Nosso primeiro encontro"
+      caption: "Nosso primeiro encontro",
     },
     {
       id: 2,
       url: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "Viagem romântica"
+      caption: "Viagem romântica",
     },
     {
       id: 3,
       url: "https://images.pexels.com/photos/1024960/pexels-photo-1024960.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "O pedido de casamento"
+      caption: "O pedido de casamento",
     },
     {
       id: 4,
       url: "https://images.pexels.com/photos/1043473/pexels-photo-1043473.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "Celebrando nosso amor"
-    }
+      caption: "Celebrando nosso amor",
+    },
   ];
 
   const changeSlide = (newIndex: number) => {
@@ -66,22 +66,22 @@ const PhotoCarousel = () => {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, isAutoPlaying]);
+  }, [currentIndex, isAutoPlaying, nextSlide]);
 
   return (
     <div className="relative max-w-4xl mx-auto">
-      <div 
+      <div
         className="relative h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-black"
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
       >
         {/* Main Image */}
         <div className="relative w-full h-full overflow-hidden">
-          <div 
+          <div
             className="flex w-full h-full transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            {photos.map((photo, index) => (
+            {photos.map((photo) => (
               <div key={photo.id} className="w-full h-full flex-shrink-0">
                 <img
                   src={photo.url}
@@ -91,10 +91,10 @@ const PhotoCarousel = () => {
               </div>
             ))}
           </div>
-          
+
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          
+
           {/* Caption */}
           <div className="absolute bottom-6 left-6 right-6 text-center">
             <p className="text-white text-lg md:text-xl font-medium bg-black/30 backdrop-blur-sm rounded-full px-6 py-3">
@@ -110,7 +110,7 @@ const PhotoCarousel = () => {
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
-        
+
         <button
           onClick={nextSlide}
           className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
@@ -132,23 +132,22 @@ const PhotoCarousel = () => {
             onClick={() => goToSlide(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
               index === currentIndex
-                ? 'bg-wedding-primary scale-125 shadow-lg'
-                : 'bg-wedding-primary/30 hover:bg-wedding-primary/60'
+                ? "bg-wedding-primary scale-125 shadow-lg"
+                : "bg-wedding-primary/30 hover:bg-wedding-primary/60"
             }`}
           />
         ))}
       </div>
 
       {/* Thumbnail Strip */}
-      <div className="flex justify-center mt-4 space-x-2 overflow-x-auto pb-2 px-4">
+      <div className="flex justify-center mt-4 space-x-2 overflow-x-auto py-2 px-4">
         {photos.map((photo, index) => (
           <button
             key={photo.id}
             onClick={() => goToSlide(index)}
-            className={`flex-shrink-0 rounded-xl overflow-hidden transition-all duration-300 ${
+            className={`flex-shrink-0 rounded-xl overflow-hidden transition-all duration-300 opacity-60 hover:opacity-100 w-16 h-16 md:w-20 md:h-20 ${
               index === currentIndex
-                ? 'ring-4 ring-wedding-primary shadow-xl w-20 h-20 md:w-24 md:h-24 scale-110'
-                : 'opacity-60 hover:opacity-100 w-16 h-16 md:w-20 md:h-20'
+                && "ring-4 ring-wedding-primary shadow-l opacity-100 scale-105"
             }`}
           >
             <img
@@ -164,3 +163,4 @@ const PhotoCarousel = () => {
 };
 
 export default PhotoCarousel;
+
