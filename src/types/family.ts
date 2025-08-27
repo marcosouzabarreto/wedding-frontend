@@ -1,67 +1,38 @@
+export interface RSVP {
+  ID: string;
+  willAttend: boolean;
+  dietaryRestrictions?: string;
+  message?: string;
+}
+
 export interface FamilyMember {
-  id: string;
+  ID: string;
   name: string;
   familyName: string;
   isMainContact: boolean;
-  attending?: boolean;
   dietaryRestrictions?: string;
+  rsvp?: RSVP;
 }
 
 export interface Family {
-  id: string;
+  ID: string;
   familyName: string;
   token: string;
-  members: FamilyMember[];
-  maxGuests: number;
-  contactInfo?: {
-    email: string;
-    phone: string;
-    message: string;
-  };
+  email: string;
+  phone: string;
+  guests: FamilyMember[];
 }
 
-export const mockFamilies: Family[] = [
-  {
-    id: '1',
-    familyName: 'Barreto',
-    token: 'BARRETO2025',
-    maxGuests: 4,
-    contactInfo: {
-      email: 'marco.barreto@email.com',
-      phone: '(11) 99999-9999',
-      message: 'Mal podemos esperar para celebrar com vocês!'
-    },
-    members: [
-      { id: '1-1', name: 'Marco Aurelio', familyName: 'Barreto', isMainContact: true, attending: true },
-      { id: '1-2', name: 'Viviane', familyName: 'Barreto', isMainContact: false, attending: true, dietaryRestrictions: 'Vegetariana' },
-      { id: '1-3', name: 'João', familyName: 'Barreto', isMainContact: false },
-      { id: '1-4', name: 'Marco Antonio', familyName: 'Barreto', isMainContact: false, attending: true },
-    ]
-  },
-  {
-    id: '2',
-    familyName: 'Silva',
-    token: 'SILVA2025',
-    maxGuests: 3,
-    members: [
-      { id: '2-1', name: 'Carlos', familyName: 'Silva', isMainContact: true },
-      { id: '2-2', name: 'Lucia', familyName: 'Silva', isMainContact: false },
-      { id: '2-3', name: 'Pedro', familyName: 'Silva', isMainContact: false },
-    ]
-  },
-  {
-    id: '3',
-    familyName: 'Santos',
-    token: 'SANTOS2025',
-    maxGuests: 2,
-    contactInfo: {
-      email: 'roberto.santos@email.com',
-      phone: '(21) 88888-8888',
-      message: 'Obrigado pelo convite!'
-    },
-    members: [
-      { id: '3-1', name: 'Roberto', familyName: 'Santos', isMainContact: true, attending: true },
-      { id: '3-2', name: 'Elena', familyName: 'Santos', isMainContact: false, attending: true, dietaryRestrictions: 'Sem glúten' },
-    ]
-  }
-]
+export interface FamilyRSVPMemberInput {
+  guestId: string;
+  willAttend: boolean;
+  dietaryRestrictions?: string;
+}
+
+export interface FamilyRSVPRequest {
+  familyToken: string;
+  email: string;
+  phone: string;
+  message?: string;
+  guests: FamilyRSVPMemberInput[];
+}

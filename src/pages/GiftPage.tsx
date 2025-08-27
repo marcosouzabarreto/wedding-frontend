@@ -1,10 +1,7 @@
-import { useState } from "react";
-import {
-  Gift,
-  Check,
-  User,
-  MessageSquare,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Gift, Check, User, MessageSquare } from "lucide-react";
+import { Wallet } from "@mercadopago/sdk-react";
+import { getGifts, createPreference } from "../services/giftService";
 
 interface GiftItem {
   id: number;
@@ -15,79 +12,26 @@ interface GiftItem {
 }
 
 const GiftPage = () => {
-  const [gifts, setGifts] = useState<GiftItem[]>([
-    {
-      id: 1,
-      name: "Batedeira de Cozinha",
-      price: 299,
-      image:
-        "https://images.pexels.com/photos/4226924/pexels-photo-4226924.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-    {
-      id: 2,
-      name: "Jogo de Jantar Porcelana",
-      price: 450,
-      image:
-        "https://images.pexels.com/photos/6953876/pexels-photo-6953876.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-    {
-      id: 3,
-      name: "Jogo de Lençóis Algodão",
-      price: 180,
-      image:
-        "https://images.pexels.com/photos/545034/pexels-photo-545034.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-    {
-      id: 4,
-      name: "Conjunto de Panelas",
-      price: 380,
-      image:
-        "https://images.pexels.com/photos/4226796/pexels-photo-4226796.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-    {
-      id: 5,
-      name: "Coleção de Taças de Vinho",
-      price: 120,
-      image:
-        "https://images.pexels.com/photos/1123260/pexels-photo-1123260.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-    {
-      id: 6,
-      name: "Conjunto de Toalhas",
-      price: 95,
-      image:
-        "https://images.pexels.com/photos/6489097/pexels-photo-6489097.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-    {
-      id: 7,
-      name: "Máquina de Café",
-      price: 250,
-      image:
-        "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-    {
-      id: 8,
-      name: "Conjunto de Porta-retratos",
-      price: 75,
-      image:
-        "https://images.pexels.com/photos/1762851/pexels-photo-1762851.jpeg?auto=compress&cs=tinysrgb&w=400",
-      selected: false,
-    },
-  ]);
-
+  const [gifts, setGifts] = useState<GiftItem[]>([]);
   const [customAmount, setCustomAmount] = useState("");
   const [selectedCustom, setSelectedCustom] = useState(false);
   const [giftPersonalization, setGiftPersonalization] = useState({
     name: "",
     message: "",
   });
+  const [preferenceId, setPreferenceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGifts = async () => {
+      try {
+        const data = await getGifts();
+        setGifts(data.map((gift: any) => ({ ...gift, selected: false })));
+      } catch (error) {
+        console.error("Error fetching gifts:", error);
+      }
+    };
+    fetchGifts();
+  }, []);
 
   const handleGiftSelect = (id: number) => {
     setGifts(
@@ -115,6 +59,26 @@ const GiftPage = () => {
     return gifts
       .filter((gift) => gift.selected)
       .reduce((total, gift) => total + gift.price, 0);
+  };
+
+  const handleCheckout = async () => {
+    const selectedGifts = gifts.filter((gift) => gift.selected);
+    if (selectedGifts.length === 0) {
+      alert("Por favor, selecione ao menos um presente.");
+      return;
+    }
+
+    const gift_ids = selectedGifts.map((gift) => gift.id);
+
+    try {
+      const data = await createPreference(gift_ids);
+      setPreferenceId(data.preferenceId);
+    } catch (error) {
+      console.error("Error creating preference:", error);
+      alert(
+        "Ocorreu um erro ao iniciar o pagamento. Por favor, tente novamente.",
+      );
+    }
   };
 
   return (
@@ -262,9 +226,16 @@ const GiftPage = () => {
             <div className="text-3xl font-bold text-wedding-primary mb-6">
               Total: R$ {getTotalAmount()}
             </div>
-            <button className="bg-wedding-primary text-white px-12 py-4 rounded-full text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl">
-              Finalizar Presente
-            </button>
+            {!preferenceId ? (
+              <button
+                onClick={handleCheckout}
+                className="bg-wedding-primary text-white px-12 py-4 rounded-full text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Finalizar Presente
+              </button>
+            ) : (
+              <Wallet initialization={{ preferenceId }} />
+            )}
             <p className="text-sm text-wedding-dark mt-4">
               Você será redirecionado para nosso processador de pagamento seguro
             </p>
