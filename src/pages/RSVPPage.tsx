@@ -1,180 +1,216 @@
-import React, { useState } from 'react';
-import { Send, User, Mail, Phone, Heart, Users, Key, Check, X } from 'lucide-react';
-import { mockFamilies, Family, FamilyMember } from '../types/family';
+import React, { useState, useEffect } from "react";
+import {
+  Send,
+  Mail,
+  Phone,
+  Heart,
+  Users,
+  Key,
+  Check,
+  Loader2,
+} from "lucide-react";
+import { Family, FamilyMember, FamilyRSVPRequest } from "../types/family";
+import { getFamilyByToken, submitRsvp } from "../services/rsvpService";
+import { AxiosError } from "axios";
 
 interface RSVPFormData {
   email: string;
   phone: string;
   message: string;
-  attendingMembers: FamilyMember[];
 }
 
 const RSVPPage = () => {
-  const [step, setStep] = useState<'token' | 'selection' | 'details'>('token');
-  const [familyToken, setFamilyToken] = useState('');
-  const [tokenError, setTokenError] = useState('');
+  const [step, setStep] = useState<"token" | "selection" | "details">("token");
+  const [familyToken, setFamilyToken] = useState("");
+  const [isVerifyingToken, setIsVerifyingToken] = useState(false);
+  const [tokenError, setTokenError] = useState("");
   const [currentFamily, setCurrentFamily] = useState<Family | null>(null);
-  const [selectedMembers, setSelectedMembers] = useState<FamilyMember[]>([]);
+  const [selectedGuests, setSelectedGuests] = useState<FamilyMember[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [formData, setFormData] = useState<RSVPFormData>({
-    email: '',
-    phone: '',
-    message: '',
-    attendingMembers: []
+    email: "",
+    phone: "",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  console.log({ currentFamily });
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (currentFamily) {
+      const familyGuests = Array.isArray(currentFamily.guests)
+        ? currentFamily.guests
+        : [];
 
-    const family = mockFamilies.find(f => f.token.toUpperCase() === familyToken.toUpperCase());
-
-    if (family) {
-      setCurrentFamily(family);
-      setTokenError('');
-
-      const existingAttendees = family.members.filter(member => member.attending === true);
-      const hasExistingRSVP = existingAttendees.length > 0 || family.contactInfo;
+      const existingAttendees = familyGuests.filter(
+        (member) => member.rsvp?.willAttend === true,
+      );
+      const hasExistingRSVP =
+        existingAttendees.length > 0 || !!currentFamily.email;
 
       if (hasExistingRSVP) {
         setIsUpdating(true);
-        setSelectedMembers(existingAttendees.map(member => ({ ...member })));
-
-        if (family.contactInfo) {
-          setFormData(prev => ({
-            ...prev,
-            email: family.contactInfo?.email || '',
-            phone: family.contactInfo?.phone || '',
-            message: family.contactInfo?.message || ''
-          }));
-        }
+        setSelectedGuests(
+          existingAttendees.map((member) => ({
+            ...member,
+            dietaryRestrictions: member.rsvp?.dietaryRestrictions || "",
+          })),
+        );
+        setFormData({
+          email: currentFamily.email || "",
+          phone: currentFamily.phone || "",
+          message: currentFamily.guests[0]?.rsvp?.message || "",
+        });
       } else {
         setIsUpdating(false);
-        setSelectedMembers([]);
-        setFormData({
-          email: '',
-          phone: '',
-          message: '',
-          attendingMembers: []
-        });
+        setSelectedGuests([]);
+        setFormData({ email: "", phone: "", message: "" });
       }
+    }
+  }, [currentFamily]);
 
-      setStep('selection');
-    } else {
-      setTokenError('Token da família inválido. Por favor, verifique e tente novamente.');
+  const handleTokenSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!familyToken) {
+      setTokenError("Por favor, insira um token.");
+      return;
+    }
+    setIsVerifyingToken(true);
+    setTokenError("");
+    try {
+      const family = await getFamilyByToken(familyToken.trim());
+      setCurrentFamily(family);
+      setStep("selection");
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        setTokenError(
+          "Token da família inválido. Por favor, verifique e tente novamente.",
+        );
+      } else {
+        setTokenError(
+          "Ocorreu um erro ao verificar o token. Tente novamente mais tarde.",
+        );
+      }
+      console.error(error);
+    } finally {
+      setIsVerifyingToken(false);
     }
   };
 
   const handleMemberToggle = (member: FamilyMember) => {
-    setSelectedMembers(prev => {
-      const isSelected = prev.some(m => m.id === member.id);
+    setSelectedGuests((prev) => {
+      const isSelected = prev.some((m) => m.ID === member.ID);
       if (isSelected) {
-        return prev.filter(m => m.id !== member.id);
+        return prev.filter((m) => m.ID !== member.ID);
       } else {
-        return [...prev, { ...member, attending: true }];
+        const originalMember = currentFamily?.guests.find(
+          (m) => m.ID === member.ID,
+        );
+        return [
+          ...prev,
+          {
+            ...member,
+            rsvp: {
+              ...member.rsvp,
+              willAttend: true,
+              dietaryRestrictions:
+                originalMember?.rsvp?.dietaryRestrictions || "",
+            },
+          },
+        ];
       }
     });
   };
 
-  const updateMemberDietaryRestrictions = (memberId: string, dietary: string) => {
-    setSelectedMembers(prev =>
-      prev.map(member =>
-        member.id === memberId
-          ? { ...member, dietaryRestrictions: dietary }
-          : member
-      )
+  const updateMemberDietaryRestrictions = (
+    memberId: string,
+    dietary: string,
+  ) => {
+    setSelectedGuests((prev) =>
+      prev.map((member) =>
+        member.ID === memberId
+          ? {
+              ...member,
+              rsvp: {
+                ...(member.rsvp ?? {
+                  ID: memberId,
+                  willAttend: false,
+                }),
+                dietaryRestrictions: dietary,
+              },
+            }
+          : member,
+      ),
     );
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
-
-    if (!formData.email.trim()) newErrors.email = 'Email é obrigatório';
-    if (!formData.email.includes('@')) newErrors.email = 'Por favor, insira um email válido';
-    if (selectedMembers.length === 0) newErrors.members = 'Selecione pelo menos um membro da família';
-
+    const newErrors: { [key: string]: string } = {};
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Por favor, insira um email válido";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFinalSubmit = (e: React.FormEvent) => {
+  const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm() || !currentFamily) return;
 
-    if (validateForm()) {
-      // Update the mock data to simulate saving changes
-      if (currentFamily) {
-        const familyIndex = mockFamilies.findIndex(f => f.id === currentFamily.id);
-        if (familyIndex !== -1) {
-          // Update family contact info
-          mockFamilies[familyIndex].contactInfo = {
-            email: formData.email,
-            phone: formData.phone,
-            message: formData.message
-          };
+    setIsSubmitting(true);
+    setSubmitError(null);
 
-          // Update member attendance status
-          mockFamilies[familyIndex].members = mockFamilies[familyIndex].members.map(member => {
-            const selectedMember = selectedMembers.find(sm => sm.id === member.id);
-            if (selectedMember) {
-              return {
-                ...member,
-                attending: true,
-                dietaryRestrictions: selectedMember.dietaryRestrictions
-              };
-            } else {
-              return {
-                ...member,
-                attending: false,
-                dietaryRestrictions: undefined
-              };
-            }
-          });
-        }
-      }
+    const rsvpData: FamilyRSVPRequest = {
+      familyToken: currentFamily.token,
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message,
+      guests: (currentFamily.guests || []).map((member) => {
+        const selected = selectedGuests.find((m) => m.ID === member.ID);
+        return {
+          guestId: member.ID,
+          willAttend: !!selected,
+          dietaryRestrictions: selected?.rsvp?.dietaryRestrictions || "",
+        };
+      }),
+    };
 
-      const finalData = {
-        ...formData,
-        attendingMembers: selectedMembers,
-        family: currentFamily?.familyName,
-        isUpdate: isUpdating
-      };
-
-      console.log('RSVP submitted:', finalData);
+    try {
+      await submitRsvp(rsvpData);
       setSubmitted(true);
+    } catch (error) {
+      console.error(error);
+      setSubmitError(
+        "Houve um erro ao enviar seu RSVP. Por favor, tente novamente mais tarde.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const resetForm = () => {
-    setStep('token');
-    setFamilyToken('');
-    setTokenError('');
+    setStep("token");
+    setFamilyToken("");
+    setTokenError("");
     setCurrentFamily(null);
-    setSelectedMembers([]);
+    setSelectedGuests([]);
     setIsUpdating(false);
-    setFormData({
-      email: '',
-      phone: '',
-      message: '',
-      attendingMembers: []
-    });
+    setFormData({ email: "", phone: "", message: "" });
     setErrors({});
     setSubmitted(false);
+    setIsSubmitting(false);
+    setSubmitError(null);
   };
 
   if (submitted) {
@@ -184,20 +220,28 @@ const RSVPPage = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl">
             <Heart className="h-16 w-16 text-wedding-primary mx-auto mb-6 animate-bounce-gentle" />
             <h2 className="text-3xl font-semibold text-wedding-primary mb-4">
-              {isUpdating ? 'RSVP Atualizado!' : 'Obrigado!'}
+              {isUpdating ? "RSVP Atualizado!" : "Obrigado!"}
             </h2>
             <p className="text-wedding-dark text-lg mb-6">
-              Seu RSVP foi {isUpdating ? 'atualizado' : 'recebido'} para a família {currentFamily?.familyName}.
-              Mal podemos esperar para celebrar com vocês!
+              Seu RSVP foi {isUpdating ? "atualizado" : "recebido"} para a
+              família {currentFamily?.familyName}. Mal podemos esperar para
+              celebrar com vocês!
             </p>
             <div className="text-sm text-wedding-dark mb-6">
               <p className="font-semibold mb-2">Confirmados:</p>
-              {selectedMembers.map(member => (
-                <p key={member.id} className="flex items-center justify-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  {member.name} {member.familyName}
-                </p>
-              ))}
+              {selectedGuests.length > 0 ? (
+                selectedGuests.map((member) => (
+                  <p
+                    key={member.ID}
+                    className="flex items-center justify-center"
+                  >
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    {member.name} {member.familyName}
+                  </p>
+                ))
+              ) : (
+                <p>Nenhum convidado confirmado.</p>
+              )}
             </div>
             <button
               onClick={resetForm}
@@ -220,13 +264,16 @@ const RSVPPage = () => {
             RSVP
           </h1>
           <p className="text-xl text-wedding-dark">
-            Por favor, nos informe se você pode se juntar a nós em nosso dia especial!
+            Por favor, nos informe se você pode se juntar a nós em nosso dia
+            especial!
           </p>
         </div>
 
-        {/* Step 1: Family Token */}
-        {step === 'token' && (
-          <form onSubmit={handleTokenSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl animate-slide-up">
+        {step === "token" && (
+          <form
+            onSubmit={handleTokenSubmit}
+            className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl animate-slide-up"
+          >
             <div className="text-center mb-8">
               <Key className="h-12 w-12 text-wedding-primary mx-auto mb-4" />
               <h2 className="text-2xl font-semibold text-wedding-primary mb-2">
@@ -236,10 +283,12 @@ const RSVPPage = () => {
                 Digite o token da sua família que foi enviado no convite
               </p>
             </div>
-
             <div className="space-y-6">
               <div>
-                <label htmlFor="familyToken" className="block text-sm font-semibold text-wedding-dark mb-2">
+                <label
+                  htmlFor="familyToken"
+                  className="block text-sm font-semibold text-wedding-dark mb-2"
+                >
                   Token da Família *
                 </label>
                 <input
@@ -248,37 +297,41 @@ const RSVPPage = () => {
                   value={familyToken}
                   onChange={(e) => {
                     setFamilyToken(e.target.value.toUpperCase());
-                    setTokenError('');
+                    setTokenError("");
                   }}
                   className={`w-full px-4 py-3 border-2 rounded-xl text-center text-lg font-mono transition-all duration-300 ${
                     tokenError
-                      ? 'border-red-400 focus:border-red-400'
-                      : 'border-wedding-primary/30 hover:border-wedding-primary/60 focus:border-wedding-primary'
+                      ? "border-red-400 focus:border-red-400"
+                      : "border-wedding-primary/30 hover:border-wedding-primary/60 focus:border-wedding-primary"
                   } focus:outline-none`}
                   placeholder="Ex: BARRETO2025"
+                  disabled={isVerifyingToken}
                 />
-                {tokenError && <p className="text-red-500 text-sm mt-2 text-center">{tokenError}</p>}
+                {tokenError && (
+                  <p className="text-red-500 text-sm mt-2 text-center">
+                    {tokenError}
+                  </p>
+                )}
               </div>
-
               <button
                 type="submit"
-                className="w-full bg-wedding-primary text-white py-4 rounded-xl text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="w-full bg-wedding-primary text-white py-4 rounded-xl text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center disabled:opacity-70"
+                disabled={isVerifyingToken}
               >
-                Verificar Token
+                {isVerifyingToken ? (
+                  <>
+                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                    Verificando...
+                  </>
+                ) : (
+                  "Verificar Token"
+                )}
               </button>
-            </div>
-
-            <div className="mt-8 p-4 bg-wedding-secondary/20 rounded-xl">
-              <p className="text-sm text-wedding-dark text-center">
-                <strong>Tokens de exemplo para teste:</strong><br />
-                BARRETO2025 (já tem RSVP), SILVA2025 (novo), SANTOS2025 (já tem RSVP)
-              </p>
             </div>
           </form>
         )}
 
-        {/* Step 2: Member Selection */}
-        {step === 'selection' && currentFamily && (
+        {step === "selection" && currentFamily && (
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl animate-slide-up">
             <div className="text-center mb-8">
               <Users className="h-12 w-12 text-wedding-primary mx-auto mb-4" />
@@ -291,44 +344,53 @@ const RSVPPage = () => {
                 )}
               </h2>
               <p className="text-wedding-dark">
-                {isUpdating ? 'Atualize' : 'Selecione'} os membros da família que estarão presentes
+                {isUpdating ? "Atualize" : "Selecione"} os membros da família
+                que estarão presentes
               </p>
             </div>
-
             <div className="space-y-4 mb-8">
-              {currentFamily.members.map((member) => {
-                const isSelected = selectedMembers.some(m => m.id === member.id);
-                const selectedMember = selectedMembers.find(m => m.id === member.id);
+              {(currentFamily.guests || []).map((member) => {
+                const isSelected = selectedGuests.some(
+                  (m) => m.ID === member.ID,
+                );
+                const selectedMember = selectedGuests.find(
+                  (m) => m.ID === member.ID,
+                );
                 return (
                   <div
-                    key={member.id}
+                    key={member.ID}
                     className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
                       isSelected
-                        ? 'border-wedding-primary bg-wedding-secondary/20'
-                        : 'border-wedding-primary/30 hover:border-wedding-primary/60'
+                        ? "border-wedding-primary bg-wedding-secondary/20"
+                        : "border-wedding-primary/30 hover:border-wedding-primary/60"
                     }`}
                     onClick={() => handleMemberToggle(member)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                          isSelected
-                            ? 'border-wedding-primary bg-wedding-primary'
-                            : 'border-wedding-primary/30'
-                        }`}>
-                          {isSelected && <Check className="h-4 w-4 text-white" />}
+                        <div
+                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                            isSelected
+                              ? "border-wedding-primary bg-wedding-primary"
+                              : "border-wedding-primary/30"
+                          }`}
+                        >
+                          {isSelected && (
+                            <Check className="h-4 w-4 text-white" />
+                          )}
                         </div>
                         <div>
                           <p className="font-semibold text-wedding-dark">
                             {member.name} {member.familyName}
                           </p>
                           {member.isMainContact && (
-                            <p className="text-sm text-wedding-primary">Contato principal</p>
+                            <p className="text-sm text-wedding-primary">
+                              Contato principal
+                            </p>
                           )}
                         </div>
                       </div>
                     </div>
-
                     {isSelected && (
                       <div className="mt-4 pt-4 border-t border-wedding-primary/20">
                         <label className="block text-sm font-semibold text-wedding-dark mb-2">
@@ -336,8 +398,15 @@ const RSVPPage = () => {
                         </label>
                         <input
                           type="text"
-                          value={selectedMember?.dietaryRestrictions || ''}
-                          onChange={(e) => updateMemberDietaryRestrictions(member.id, e.target.value)}
+                          value={
+                            selectedMember?.rsvp?.dietaryRestrictions || ""
+                          }
+                          onChange={(e) => {
+                            updateMemberDietaryRestrictions(
+                              member.ID,
+                              e.target.value,
+                            );
+                          }}
                           className="w-full px-3 py-2 border border-wedding-primary/30 rounded-lg focus:border-wedding-primary focus:outline-none"
                           placeholder="Ex: Vegetariano, alergia a nozes..."
                           onClick={(e) => e.stopPropagation()}
@@ -348,58 +417,70 @@ const RSVPPage = () => {
                 );
               })}
             </div>
-
-            {errors.members && <p className="text-red-500 text-sm mb-4 text-center">{errors.members}</p>}
-
+            {errors.guests && (
+              <p className="text-red-500 text-sm mb-4 text-center">
+                {errors.guests}
+              </p>
+            )}
             <div className="flex space-x-4">
               <button
-                onClick={() => setStep('token')}
+                onClick={() => setStep("token")}
                 className="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition-all duration-300"
               >
                 Voltar
               </button>
               <button
-                onClick={() => setStep('details')}
-                disabled={selectedMembers.length === 0}
-                className="flex-1 bg-wedding-primary text-white py-3 rounded-xl font-semibold hover:bg-wedding-primary/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => {
+                  setStep("details");
+                }}
+                className="flex-1 bg-wedding-primary text-white py-3 rounded-xl font-semibold hover:bg-wedding-primary/90 transition-all duration-300"
               >
-                Continuar ({selectedMembers.length} selecionados)
+                Continuar ({selectedGuests.length} selecionados)
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 3: Contact Details */}
-        {step === 'details' && (
-          <form onSubmit={handleFinalSubmit} className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl animate-slide-up">
+        {step === "details" && (
+          <form
+            onSubmit={handleFinalSubmit}
+            className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl animate-slide-up"
+          >
             <div className="text-center mb-8">
               <Mail className="h-12 w-12 text-wedding-primary mx-auto mb-4" />
               <h2 className="text-2xl font-semibold text-wedding-primary mb-2">
                 Informações de Contato
               </h2>
               <p className="text-wedding-dark">
-                {isUpdating ? 'Atualize suas' : 'Finalize seu RSVP com suas'} informações de contato
+                {isUpdating ? "Atualize suas" : "Finalize seu RSVP com suas"}{" "}
+                informações de contato
               </p>
             </div>
-
             <div className="space-y-6">
-              {/* Selected Members Summary */}
               <div className="bg-wedding-secondary/20 rounded-xl p-4">
-                <h3 className="font-semibold text-wedding-dark mb-2">Confirmados:</h3>
+                <h3 className="font-semibold text-wedding-dark mb-2">
+                  Confirmados:
+                </h3>
                 <div className="space-y-1">
-                  {selectedMembers.map(member => (
-                    <div key={member.id} className="flex items-center justify-between text-sm">
-                      <span>{member.name} {member.familyName}</span>
+                  {selectedGuests.map((member) => (
+                    <div
+                      key={member.ID}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span>
+                        {member.name} {member.familyName}
+                      </span>
                       <Check className="h-4 w-4 text-green-500" />
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-wedding-dark mb-2">
-                  Endereço de Email *
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-wedding-dark mb-2"
+                >
+                  Endereço de Email
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-wedding-primary h-5 w-5" />
@@ -411,18 +492,21 @@ const RSVPPage = () => {
                     onChange={handleFormChange}
                     className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl transition-all duration-300 ${
                       errors.email
-                        ? 'border-red-400 focus:border-red-400'
-                        : 'border-wedding-primary/30 hover:border-wedding-primary/60 focus:border-wedding-primary'
+                        ? "border-red-400 focus:border-red-400"
+                        : "border-wedding-primary/30 hover:border-wedding-primary/60 focus:border-wedding-primary"
                     } focus:outline-none`}
                     placeholder="Digite seu endereço de email"
                   />
                 </div>
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
               </div>
-
-              {/* Phone Field */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-semibold text-wedding-dark mb-2">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-semibold text-wedding-dark mb-2"
+                >
                   Número de Telefone
                 </label>
                 <div className="relative">
@@ -438,10 +522,11 @@ const RSVPPage = () => {
                   />
                 </div>
               </div>
-
-              {/* Message Field */}
               <div>
-                <label htmlFor="message" className="block text-sm font-semibold text-wedding-dark mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-semibold text-wedding-dark mb-2"
+                >
                   Mensagem Especial
                 </label>
                 <textarea
@@ -454,21 +539,36 @@ const RSVPPage = () => {
                   placeholder="Compartilhe uma mensagem especial conosco..."
                 />
               </div>
-
+              {submitError && (
+                <div className="text-red-500 text-sm text-center p-3 bg-red-100 rounded-lg">
+                  {submitError}
+                </div>
+              )}
               <div className="flex space-x-4">
                 <button
                   type="button"
-                  onClick={() => setStep('selection')}
+                  onClick={() => setStep("selection")}
                   className="flex-1 bg-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-400 transition-all duration-300"
+                  disabled={isSubmitting}
                 >
                   Voltar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-wedding-primary text-white py-4 rounded-xl text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                  className="flex-1 bg-wedding-primary text-white py-4 rounded-xl text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  disabled={isSubmitting}
                 >
-                  <Send className="h-5 w-5" />
-                  <span>{isUpdating ? 'Atualizar' : 'Enviar'} RSVP</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                      <span>Enviando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5" />
+                      <span>{isUpdating ? "Atualizar" : "Enviar"} RSVP</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
