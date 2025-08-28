@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
 import { Gift, Check, User, MessageSquare } from "lucide-react";
-import { Wallet } from "@mercadopago/sdk-react";
+import { Wallet, initMercadoPago } from "@mercadopago/sdk-react";
 import { getGifts, createPreference } from "../services/giftService";
 
 interface GiftItem {
-  id: number;
+  ID: number;
   name: string;
   price: number;
   image: string;
   selected: boolean;
+}
+
+
+const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
+if (publicKey) {
+  initMercadoPago(publicKey);
 }
 
 const GiftPage = () => {
@@ -25,23 +31,25 @@ const GiftPage = () => {
     const fetchGifts = async () => {
       try {
         const data = await getGifts();
-        setGifts(data.map((gift: any) => ({ ...gift, selected: false })));
+        setGifts(data.map((gift: GiftItem) => ({ ...gift, selected: false })));
       } catch (error) {
         console.error("Error fetching gifts:", error);
       }
     };
     fetchGifts();
   }, []);
+  console.log({ gifts });
 
   const handleGiftSelect = (id: number) => {
     setGifts(
       gifts.map((gift) =>
-        gift.id === id ? { ...gift, selected: !gift.selected } : gift,
+        gift.ID === id ? { ...gift, selected: !gift.selected } : gift,
       ),
     );
     setSelectedCustom(false);
   };
 
+  console.log({ preferenceId });
   const handleCustomAmountChange = (value: string) => {
     setCustomAmount(value);
     if (value) {
@@ -68,7 +76,7 @@ const GiftPage = () => {
       return;
     }
 
-    const gift_ids = selectedGifts.map((gift) => gift.id);
+    const gift_ids = selectedGifts.map((gift) => gift.ID);
 
     try {
       const data = await createPreference(gift_ids);
@@ -126,11 +134,11 @@ const GiftPage = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12 animate-slide-up">
           {gifts.map((gift) => (
             <div
-              key={gift.id}
+              key={gift.ID}
               className={`bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl transition-all duration-300 cursor-pointer hover:shadow-2xl hover:-translate-y-2 ${
                 gift.selected ? "ring-4 ring-wedding-primary scale-105" : ""
               }`}
-              onClick={() => handleGiftSelect(gift.id)}
+              onClick={() => handleGiftSelect(gift.ID)}
             >
               <div className="relative">
                 <img
@@ -247,4 +255,3 @@ const GiftPage = () => {
 };
 
 export default GiftPage;
-

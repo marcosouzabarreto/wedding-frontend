@@ -6,6 +6,6 @@ export const getGifts = async () => {
 };
 
 export const createPreference = async (gift_ids: number[]) => {
-  const response = await api.post('/payments/create-preference/', { gift_ids });
+  const response = await api.post('/payments/create-preference', { gift_ids });
   return response.data;
 };
