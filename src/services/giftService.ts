@@ -5,7 +5,14 @@ export const getGifts = async () => {
   return response.data;
 };
 
-export const createPreference = async (gift_ids: number[]) => {
-  const response = await api.post('/payments/create-preference', { gift_ids });
+interface CreatePreferencePayload {
+  gift_ids: number[];
+  custom_amount?: number;
+  gifter_name?: string;
+  message?: string;
+}
+
+export const createPreference = async (payload: CreatePreferencePayload) => {
+  const response = await api.post('/payments/create-preference', payload);
   return response.data;
 };

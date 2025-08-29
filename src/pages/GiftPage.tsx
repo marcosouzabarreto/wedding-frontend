@@ -7,10 +7,9 @@ interface GiftItem {
   ID: number;
   name: string;
   price: number;
-  image: string;
+  imageUrl: string;
   selected: boolean;
 }
-
 
 const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
 if (publicKey) {
@@ -49,7 +48,6 @@ const GiftPage = () => {
     setSelectedCustom(false);
   };
 
-  console.log({ preferenceId });
   const handleCustomAmountChange = (value: string) => {
     setCustomAmount(value);
     if (value) {
@@ -59,6 +57,8 @@ const GiftPage = () => {
       setSelectedCustom(false);
     }
   };
+
+  console.log({ gifts });
 
   const getTotalAmount = () => {
     if (selectedCustom && customAmount) {
@@ -71,15 +71,20 @@ const GiftPage = () => {
 
   const handleCheckout = async () => {
     const selectedGifts = gifts.filter((gift) => gift.selected);
-    if (selectedGifts.length === 0) {
+    if (selectedGifts.length === 0 && !customAmount) {
       alert("Por favor, selecione ao menos um presente.");
       return;
     }
 
-    const gift_ids = selectedGifts.map((gift) => gift.ID);
+    const payload = {
+      gift_ids: selectedGifts.map((gift) => gift.ID),
+      custom_amount: customAmount ? parseFloat(customAmount) : undefined,
+      gifter_name: giftPersonalization.name,
+      message: giftPersonalization.message,
+    };
 
     try {
-      const data = await createPreference(gift_ids);
+      const data = await createPreference(payload);
       setPreferenceId(data.preferenceId);
     } catch (error) {
       console.error("Error creating preference:", error);
@@ -142,7 +147,7 @@ const GiftPage = () => {
             >
               <div className="relative">
                 <img
-                  src={gift.image}
+                  src={gift.imageUrl}
                   alt={gift.name}
                   className="w-full h-48 object-cover"
                 />

@@ -4,6 +4,7 @@ import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import GiftPage from './pages/GiftPage';
 import RSVPPage from './pages/RSVPPage';
+import GiftPaymentStatusPage from './pages/GiftPaymentStatusPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/gifts" element={<GiftPage />} />
           <Route path="/rsvp" element={<RSVPPage />} />
+          <Route path="/gift-payment-status" element={<GiftPaymentStatusPage />} />
         </Routes>
       </div>
     </Router>
