@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Heart, Calendar, MapPin, Clock } from "lucide-react";
+import heroImage from "../assets/couple/hero.jpg";
+import { Heart, Calendar, MapPin, Clock, ChevronDown } from "lucide-react";
 import Countdown from "../components/Countdown";
 import PhotoCarousel from "../components/PhotoCarousel";
 import PhotoGallery from "../components/PhotoGallery";
@@ -15,55 +16,30 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Photo Section */}
-      <section className="relative py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8 animate-fade-in">
-            <img
-              src="https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=1200"
-              alt="Marco & Lavinia"
-              className="w-full max-w-2xl mx-auto h-64 md:h-80 object-cover rounded-3xl shadow-2xl"
-            />
-          </div>
+      <section
+        className="relative flex h-[94vh] items-center justify-center bg-cover bg-center bg-fixed text-center"
+        style={{
+          backgroundImage:
+            `url(${heroImage})`,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-10 mt-80 animate-fade-in">
+          <Heart className="mx-auto mb-6 h-16 w-16 animate-pulse-soft text-white" />
+          <h1 className="mb-4 font-script text-4xl text-white md:text-6xl">
+            Marco & Lavinia
+          </h1>
+          <p className="mb-8 text-lg text-gray-200 md:text-xl">
+            vão se casar!
+          </p>
+        </div>
+        <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 animate-bounce text-white">
+          <ChevronDown className="h-8 w-8" />
         </div>
       </section>
 
-      <section className="relative py-20 px-4 text-center">
+      <section className="relative px-4 pt-20 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="animate-fade-in">
-            <Heart className="h-16 w-16 text-wedding-primary mx-auto mb-6 animate-pulse-soft" />
-            <h1 className="font-script text-5xl md:text-7xl text-wedding-primary mb-4">
-              Marco & Lavinia
-            </h1>
-            <p className="text-xl md:text-2xl text-wedding-dark mb-8">
-              vão se casar!
-            </p>
-          </div>
-
-          <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 mb-12 shadow-xl animate-slide-up">
-            <div className="grid md:grid-cols-3 gap-6 text-center">
-              <div className="flex flex-col items-center">
-                <Calendar className="h-8 w-8 text-wedding-primary mb-3" />
-                <h3 className="text-lg font-semibold text-wedding-dark mb-1">
-                  Data
-                </h3>
-                <p className="text-wedding-dark">06 de Dezembro, 2025</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <Clock className="h-8 w-8 text-wedding-primary mb-3" />
-                <h3 className="text-lg font-semibold text-wedding-dark mb-1">
-                  Horário
-                </h3>
-                <p className="text-wedding-dark">16:00</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <MapPin className="h-8 w-8 text-wedding-primary mb-3" />
-                <h3 className="text-lg font-semibold text-wedding-dark mb-1">
-                  Local
-                </h3>
-                <p className="text-wedding-dark">Arena Regis Brindes</p>
-              </div>
-            </div>
-          </div>
 
           <div className="animate-slide-up">
             <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-12">
@@ -86,6 +62,31 @@ const HomePage = () => {
                 onComplete={() => setIsCountdownFinished(true)}
               />
             )}
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 mt-12 shadow-xl animate-slide-up">
+              <div className="grid md:grid-cols-3 gap-6 text-center">
+                <div className="flex flex-col items-center">
+                  <Calendar className="h-8 w-8 text-wedding-primary mb-3" />
+                  <h3 className="text-lg font-semibold text-wedding-dark mb-1">
+                    Data
+                  </h3>
+                  <p className="text-wedding-dark">06 de Dezembro, 2025</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <Clock className="h-8 w-8 text-wedding-primary mb-3" />
+                  <h3 className="text-lg font-semibold text-wedding-dark mb-1">
+                    Horário
+                  </h3>
+                  <p className="text-wedding-dark">16:00</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <MapPin className="h-8 w-8 text-wedding-primary mb-3" />
+                  <h3 className="text-lg font-semibold text-wedding-dark mb-1">
+                    Local
+                  </h3>
+                  <p className="text-wedding-dark">Arena Regis Brindes</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
