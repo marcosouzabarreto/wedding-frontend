@@ -1,5 +1,4 @@
 import { useState } from "react";
-import heroImage from "../assets/couple/hero.jpg";
 import { Heart, Calendar, MapPin, Clock, ChevronDown } from "lucide-react";
 import Countdown from "../components/Countdown";
 import PhotoCarousel from "../components/PhotoCarousel";
@@ -20,7 +19,7 @@ const HomePage = () => {
         className="relative flex h-[94vh] items-center justify-center bg-cover bg-center bg-fixed text-center"
         style={{
           backgroundImage:
-            `url(${heroImage})`,
+            `url(/assets/hero.jpg)`,
         }}
       >
         <div className="absolute inset-0 bg-black/30" />
@@ -137,7 +136,32 @@ const HomePage = () => {
             </p>
           </div>
           <div className="animate-slide-up">
-            <WeddingPartyCarousel />
+            <WeddingPartyCarousel
+              bestMenPhotos={[
+                "/assets/best-men-and-bridesmaids/best-men/Arthur.jpeg",
+                "/assets/best-men-and-bridesmaids/best-men/Dindá.png",
+                "/assets/best-men-and-bridesmaids/best-men/João.png",
+                "/assets/best-men-and-bridesmaids/best-men/Luan.jpeg",
+                "/assets/best-men-and-bridesmaids/best-men/Vander.jpeg",
+                "/assets/best-men-and-bridesmaids/best-men/Victor.png",
+                "/assets/best-men-and-bridesmaids/best-men/Vitinho.jpeg",
+              ]}
+              bridesmaidPhotos={[
+                "/assets/best-men-and-bridesmaids/bridesmaid/Ana Paula.png",
+                "/assets/best-men-and-bridesmaids/bridesmaid/Aninha.jpeg",
+                "/assets/best-men-and-bridesmaids/bridesmaid/Clarinha.jpeg",
+                "/assets/best-men-and-bridesmaids/bridesmaid/Nanda.jpeg",
+                "/assets/best-men-and-bridesmaids/bridesmaid/Rai.jpg",
+                "/assets/best-men-and-bridesmaids/bridesmaid/Thai.jpeg",
+                "/assets/best-men-and-bridesmaids/bridesmaid/Yanca.jpeg",
+              ]}
+              couplesPhotos={[
+                "/assets/best-men-and-bridesmaids/couples/Adriel e Josi.jpeg",
+                "/assets/best-men-and-bridesmaids/couples/Luiza e Felipe.png",
+                "/assets/best-men-and-bridesmaids/couples/Mari e Dom.jpeg",
+                "/assets/best-men-and-bridesmaids/couples/Nisme e Ian.jpeg",
+              ]}
+            />
           </div>
         </div>
       </section>

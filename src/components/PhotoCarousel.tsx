@@ -1,52 +1,52 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 
 interface Photo {
   id: number;
   url: string;
-  caption: string;
 }
 
 const PhotoCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Placeholder photos - these can be replaced with actual couple photos
   const photos: Photo[] = [
-    {
-      id: 1,
-      url: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "Nosso primeiro encontro",
-    },
-    {
-      id: 2,
-      url: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "Viagem romântica",
-    },
-    {
-      id: 3,
-      url: "https://images.pexels.com/photos/1024960/pexels-photo-1024960.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "O pedido de casamento",
-    },
-    {
-      id: 4,
-      url: "https://images.pexels.com/photos/1043473/pexels-photo-1043473.jpeg?auto=compress&cs=tinysrgb&w=800",
-      caption: "Celebrando nosso amor",
-    },
+    { id: 1, url: "/assets/pre-wedding/IMG_8003.jpg" },
+    { id: 2, url: "/assets/pre-wedding/IMG_8006.jpg" },
+    { id: 3, url: "/assets/pre-wedding/IMG_8013.jpg" },
+    { id: 4, url: "/assets/pre-wedding/IMG_8025.jpg" },
+    { id: 5, url: "/assets/pre-wedding/IMG_8051.jpg" },
+    { id: 6, url: "/assets/pre-wedding/IMG_8055.jpg" },
+    { id: 7, url: "/assets/pre-wedding/IMG_8078.jpg" },
+    { id: 8, url: "/assets/pre-wedding/IMG_8094.jpg" },
+    { id: 9, url: "/assets/pre-wedding/IMG_8118.jpg" },
+    { id: 10, url: "/assets/pre-wedding/IMG_8121.jpg" },
+    { id: 11, url: "/assets/pre-wedding/IMG_8131-2.jpg" },
+    { id: 12, url: "/assets/pre-wedding/IMG_8131.jpg" },
+    { id: 13, url: "/assets/pre-wedding/IMG_8155-2.jpg" },
+    { id: 14, url: "/assets/pre-wedding/IMG_8155.jpg" },
+    { id: 15, url: "/assets/pre-wedding/IMG_8179.jpg" },
+    { id: 16, url: "/assets/pre-wedding/IMG_8230.jpg" },
+    { id: 17, url: "/assets/pre-wedding/IMG_8263.jpg" },
+    { id: 18, url: "/assets/pre-wedding/IMG_8291.jpg" },
+    { id: 19, url: "/assets/pre-wedding/IMG_8326.jpg" },
+    { id: 20, url: "/assets/pre-wedding/IMG_8337.jpg" },
+    { id: 21, url: "/assets/pre-wedding/IMG_8367.jpg" },
+    { id: 22, url: "/assets/pre-wedding/IMG_8377.jpg" },
   ];
 
-  const changeSlide = (newIndex: number) => {
-    if (newIndex === currentIndex) return;
-    setIsTransitioning(true);
-    setCurrentIndex(newIndex);
-    setTimeout(() => setIsTransitioning(false), 500);
-  };
+  const changeSlide = useCallback(
+    (newIndex: number) => {
+      if (newIndex === currentIndex) return;
+      setCurrentIndex(newIndex);
+    },
+    [setCurrentIndex, currentIndex],
+  );
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     const newIndex = currentIndex === photos.length - 1 ? 0 : currentIndex + 1;
     changeSlide(newIndex);
-  };
+  }, [currentIndex, photos.length, changeSlide]);
 
   const prevSlide = () => {
     const newIndex = currentIndex === 0 ? photos.length - 1 : currentIndex - 1;
@@ -57,7 +57,6 @@ const PhotoCarousel = () => {
     changeSlide(index);
   };
 
-  // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying) return;
 
@@ -71,7 +70,7 @@ const PhotoCarousel = () => {
   return (
     <div className="relative max-w-4xl mx-auto">
       <div
-        className="relative h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-black"
+        className="relative h-[35rem] rounded-3xl overflow-hidden shadow-2xl bg-black"
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
       >
@@ -85,8 +84,8 @@ const PhotoCarousel = () => {
               <div key={photo.id} className="w-full h-full flex-shrink-0">
                 <img
                   src={photo.url}
-                  alt={photo.caption}
-                  className="w-full h-full object-cover"
+                  alt="Pre-wedding photo"
+                  className={"w-full h-full object-cover"}
                 />
               </div>
             ))}
@@ -94,26 +93,19 @@ const PhotoCarousel = () => {
 
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
-          {/* Caption */}
-          <div className="absolute bottom-6 left-6 right-6 text-center">
-            <p className="text-white text-lg md:text-xl font-medium bg-black/30 backdrop-blur-sm rounded-full px-6 py-3">
-              {photos[currentIndex].caption}
-            </p>
-          </div>
         </div>
 
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/40 backdrop-blur-sm hover:bg-black/60 text-white p-4 rounded-full transition-all duration-300 hover:scale-110"
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
 
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/40 backdrop-blur-sm hover:bg-black/60 text-white p-4 rounded-full transition-all duration-300 hover:scale-110"
         >
           <ChevronRight className="h-6 w-6" />
         </button>
@@ -138,29 +130,8 @@ const PhotoCarousel = () => {
           />
         ))}
       </div>
-
-      {/* Thumbnail Strip */}
-      <div className="flex justify-center mt-4 space-x-2 overflow-x-auto py-2 px-4">
-        {photos.map((photo, index) => (
-          <button
-            key={photo.id}
-            onClick={() => goToSlide(index)}
-            className={`flex-shrink-0 rounded-xl overflow-hidden transition-all duration-300 opacity-60 hover:opacity-100 w-16 h-16 md:w-20 md:h-20 ${
-              index === currentIndex
-                && "ring-4 ring-wedding-primary shadow-l opacity-100 scale-105"
-            }`}
-          >
-            <img
-              src={photo.url}
-              alt={photo.caption}
-              className="w-full h-full object-cover"
-            />
-          </button>
-        ))}
-      </div>
     </div>
   );
 };
 
 export default PhotoCarousel;
-
