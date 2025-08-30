@@ -1,7 +1,5 @@
-// src/components/Countdown.tsx
 import { useState, useEffect } from "react";
 
-// Define the shape of our time left object
 interface TimeLeft {
   days: number;
   hours: number;
@@ -9,25 +7,18 @@ interface TimeLeft {
   seconds: number;
 }
 
-// Define the props for our component
 interface CountdownProps {
   targetDate: Date;
   onComplete: () => void;
 }
 
-// A small, reusable component for each time unit (Days, Hours, etc.)
 const TimeUnit = ({ value, label }: { value: number; label: string }) => (
   <div className="flex flex-col items-center">
     <div className="relative w-32 h-32 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-wedding-primary/30">
-      {/* Calendar-like header */}
       <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-wedding-primary text-white px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
         {label}
       </div>
 
-      {/* Main number display */}
-      {/* The 'key={value}' is the magic for the animation.
-          When the value changes, React sees a new key and re-mounts the element,
-          triggering the 'animate-pop-in' animation. */}
       <div
         key={value}
         className="text-5xl md:text-6xl font-bold text-wedding-primary animate-pop-in"
@@ -35,7 +26,6 @@ const TimeUnit = ({ value, label }: { value: number; label: string }) => (
         {String(value).padStart(2, "0")}
       </div>
 
-      {/* Decorative elements */}
       <div className="absolute bottom-3 flex justify-center space-x-1">
         <div className="w-2 h-2 bg-wedding-primary/30 rounded-full"></div>
         <div className="w-2 h-2 bg-wedding-primary/50 rounded-full"></div>
@@ -58,7 +48,7 @@ const Countdown = ({ targetDate, onComplete }: CountdownProps) => {
       };
     }
 
-    return null; // Return null when the countdown is over
+    return null;
   };
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(
@@ -66,7 +56,6 @@ const Countdown = ({ targetDate, onComplete }: CountdownProps) => {
   );
 
   useEffect(() => {
-    // If the countdown is already finished on mount, call onComplete
     if (!timeLeft) {
       onComplete();
       return;
@@ -77,7 +66,6 @@ const Countdown = ({ targetDate, onComplete }: CountdownProps) => {
       if (newTimeLeft) {
         setTimeLeft(newTimeLeft);
       } else {
-        // Time is up!
         clearInterval(timer);
         onComplete();
       }
@@ -105,8 +93,6 @@ const Countdown = ({ targetDate, onComplete }: CountdownProps) => {
           />
         ))
       ) : (
-        // This part will not be visible as the parent component will show the "We're Married!" message
-        // But it's good practice to handle the null state.
         <div />
       )}
     </div>
