@@ -23,6 +23,7 @@ const WeddingPartyCarousel = ({
 }: WeddingPartyCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [displayedItemsPerSlide, setDisplayedItemsPerSlide] = useState(1);
 
   const weddingParty: WeddingPartyMember[] = [
     ...bestMenPhotos.map((photo, index) => ({
@@ -51,8 +52,21 @@ const WeddingPartyCarousel = ({
     })),
   ];
 
-  const itemsPerSlide = 3;
-  const totalSlides = Math.ceil(weddingParty.length / itemsPerSlide);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setDisplayedItemsPerSlide(3);
+      } else {
+        setDisplayedItemsPerSlide(1);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const totalSlides = Math.ceil(weddingParty.length / displayedItemsPerSlide);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
@@ -71,7 +85,7 @@ const WeddingPartyCarousel = ({
 
     const interval = setInterval(() => {
       nextSlide();
-    }, 5000); // Change slide every 5 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
@@ -87,10 +101,10 @@ const WeddingPartyCarousel = ({
   return (
     <>
       <div className="text-center mb-8">
-        <div className="flex justify-center items-center space-x-4 mb-4">
+        <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-4 mb-4">
           <div className="flex items-center space-x-2">
             <Users className="h-6 w-6 text-wedding-primary" />
-            <span className="text-lg font-semibold text-wedding-primary">
+            <span className="text-base sm:text-lg font-semibold text-wedding-primary text-center">
               {
                 weddingParty.filter((member) => member.role === "bestman")
                   .length
@@ -101,7 +115,7 @@ const WeddingPartyCarousel = ({
           <Heart className="h-5 w-5 text-wedding-accent" />
           <div className="flex items-center space-x-2">
             <Users className="h-6 w-6 text-wedding-primary" />
-            <span className="text-lg font-semibold text-wedding-primary">
+            <span className="text-base sm:text-lg font-semibold text-wedding-primary text-center">
               {
                 weddingParty.filter((member) => member.role === "bridesmaid")
                   .length
@@ -112,7 +126,7 @@ const WeddingPartyCarousel = ({
           <Heart className="h-5 w-5 text-wedding-accent" />
           <div className="flex items-center space-x-2">
             <Users className="h-6 w-6 text-wedding-primary" />
-            <span className="text-lg font-semibold text-wedding-primary">
+            <span className="text-base sm:text-lg font-semibold text-wedding-primary text-center">
               {weddingParty.filter((member) => member.role === "couple").length}{" "}
               Casais
             </span>
@@ -130,16 +144,16 @@ const WeddingPartyCarousel = ({
           >
             {Array.from({ length: totalSlides }).map((_, slideIndex) => (
               <div key={slideIndex} className="w-full flex-shrink-0">
-                <div className="grid md:grid-cols-3 gap-6 p-4">
+                <div className="flex flex-wrap justify-center gap-6 p-4">
                   {weddingParty
                     .slice(
-                      slideIndex * itemsPerSlide,
-                      (slideIndex + 1) * itemsPerSlide,
+                      slideIndex * displayedItemsPerSlide,
+                      (slideIndex + 1) * displayedItemsPerSlide,
                     )
                     .map((member) => (
                       <div
                         key={member.id}
-                        className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                        className="w-full sm:w-1/2 md:w-1/4 bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
                       >
                         {/* Photo */}
                         <div className="relative h-64 overflow-hidden">
