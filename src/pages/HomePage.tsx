@@ -16,7 +16,7 @@ const HomePage = () => {
     <div className="min-h-screen">
       {/* Hero Photo Section */}
       <section
-        className="relative flex h-[94vh] items-center justify-center bg-cover bg-center bg-fixed text-center"
+        className="relative flex h-[94vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
         style={{
           backgroundImage:
             `url(/assets/hero.jpg)`,

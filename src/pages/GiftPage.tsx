@@ -13,7 +13,7 @@ import { Wallet, initMercadoPago } from "@mercadopago/sdk-react";
 import { getGifts, createPreference } from "../services/giftService";
 
 interface GiftItem {
-  id: number;
+  id: string;
   name: string;
   price: number;
   imageUrl: string;
@@ -55,7 +55,13 @@ const GiftPage = () => {
     const fetchGifts = async () => {
       try {
         const data = await getGifts();
-        setGifts(data.map((gift: GiftItem) => ({ ...gift, selected: false })));
+        setGifts(
+          data.map((gift: GiftItem) => ({
+            ...gift,
+            id: gift.id,
+            selected: false,
+          })),
+        );
       } catch (error) {
         console.error("Error fetching gifts:", error);
       } finally {
@@ -65,8 +71,7 @@ const GiftPage = () => {
     fetchGifts();
   }, []);
 
-  const handleGiftSelect = (id: number) => {
-    console.log({ id });
+  const handleGiftSelect = (id: string) => {
     setGifts(
       gifts.map((gift) =>
         gift.id === id ? { ...gift, selected: !gift.selected } : gift,

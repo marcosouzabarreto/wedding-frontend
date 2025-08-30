@@ -6,7 +6,7 @@ export const getGifts = async () => {
 };
 
 interface CreatePreferencePayload {
-  gift_ids: number[];
+  gift_ids: string[];
   custom_amount?: number;
   gifter_name?: string;
   message?: string;
