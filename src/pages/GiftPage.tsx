@@ -1,10 +1,19 @@
-import { useState, useEffect } from "react";
-import { Gift, Check, User, MessageSquare } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  Gift,
+  Check,
+  User,
+  MessageSquare,
+  Loader2,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Wallet, initMercadoPago } from "@mercadopago/sdk-react";
 import { getGifts, createPreference } from "../services/giftService";
 
 interface GiftItem {
-  ID: number;
+  id: number;
   name: string;
   price: number;
   imageUrl: string;
@@ -16,8 +25,20 @@ if (publicKey) {
   initMercadoPago(publicKey);
 }
 
+const GiftSkeleton = () => (
+  <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl animate-pulse">
+    <div className="w-full h-48 bg-gray-300"></div>
+    <div className="p-6">
+      <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+      <div className="h-8 bg-gray-300 rounded w-1/2"></div>
+    </div>
+  </div>
+);
+
 const GiftPage = () => {
   const [gifts, setGifts] = useState<GiftItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
   const [selectedCustom, setSelectedCustom] = useState(false);
   const [giftPersonalization, setGiftPersonalization] = useState({
@@ -26,6 +47,10 @@ const GiftPage = () => {
   });
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const giftsPerPage = 8;
+
   useEffect(() => {
     const fetchGifts = async () => {
       try {
@@ -33,16 +58,18 @@ const GiftPage = () => {
         setGifts(data.map((gift: GiftItem) => ({ ...gift, selected: false })));
       } catch (error) {
         console.error("Error fetching gifts:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchGifts();
   }, []);
-  console.log({ gifts });
 
   const handleGiftSelect = (id: number) => {
+    console.log({ id });
     setGifts(
       gifts.map((gift) =>
-        gift.ID === id ? { ...gift, selected: !gift.selected } : gift,
+        gift.id === id ? { ...gift, selected: !gift.selected } : gift,
       ),
     );
     setSelectedCustom(false);
@@ -57,8 +84,6 @@ const GiftPage = () => {
       setSelectedCustom(false);
     }
   };
-
-  console.log({ gifts });
 
   const getTotalAmount = () => {
     if (selectedCustom && customAmount) {
@@ -76,8 +101,10 @@ const GiftPage = () => {
       return;
     }
 
+    setCheckoutLoading(true);
+
     const payload = {
-      gift_ids: selectedGifts.map((gift) => gift.ID),
+      gift_ids: selectedGifts.map((gift) => gift.id),
       custom_amount: customAmount ? parseFloat(customAmount) : undefined,
       gifter_name: giftPersonalization.name,
       message: giftPersonalization.message,
@@ -91,8 +118,27 @@ const GiftPage = () => {
       alert(
         "Ocorreu um erro ao iniciar o pagamento. Por favor, tente novamente.",
       );
+    } finally {
+      setCheckoutLoading(false);
     }
   };
+
+  const sortedGifts = useMemo(() => {
+    return [...gifts].sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.price - b.price;
+      } else {
+        return b.price - a.price;
+      }
+    });
+  }, [gifts, sortOrder]);
+
+  const paginatedGifts = useMemo(() => {
+    const startIndex = (currentPage - 1) * giftsPerPage;
+    return sortedGifts.slice(startIndex, startIndex + giftsPerPage);
+  }, [sortedGifts, currentPage]);
+
+  const totalPages = Math.ceil(sortedGifts.length / giftsPerPage);
 
   return (
     <div className="min-h-screen py-16 px-4">
@@ -136,44 +182,84 @@ const GiftPage = () => {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12 animate-slide-up">
-          {gifts.map((gift) => (
-            <div
-              key={gift.ID}
-              className={`bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl transition-all duration-300 cursor-pointer hover:shadow-2xl hover:-translate-y-2 ${
-                gift.selected ? "ring-4 ring-wedding-primary scale-105" : ""
-              }`}
-              onClick={() => handleGiftSelect(gift.ID)}
-            >
-              <div className="relative">
-                <img
-                  src={gift.imageUrl}
-                  alt={gift.name}
-                  className="w-full h-48 object-cover"
-                />
-                {gift.selected && (
-                  <div className="absolute inset-0 bg-wedding-primary/20 flex items-center justify-center">
-                    <div className="bg-wedding-primary rounded-full p-3">
-                      <Check className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                )}
-              </div>
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+            className="flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-md text-wedding-primary hover:bg-wedding-primary/10 transition-all duration-300"
+          >
+            <ArrowUpDown className="h-5 w-5 mr-2" />
+            <span>
+              {sortOrder === "asc"
+                ? "Ordenar por Preço (Menor para Maior)"
+                : "Ordenar por Preço (Maior para Menor)"}
+            </span>
+          </button>
+        </div>
 
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-wedding-dark mb-2">
-                  {gift.name}
-                </h3>
-                <p className="text-2xl font-bold text-wedding-primary">
-                  R$ {gift.price}
-                </p>
-              </div>
-            </div>
-          ))}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12 animate-slide-up">
+          {loading
+            ? Array.from({ length: 8 }).map((_, index) => (
+                <GiftSkeleton key={index} />
+              ))
+            : paginatedGifts.map((gift) => (
+                <div
+                  key={gift.id}
+                  className={`bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl transition-all duration-300 cursor-pointer hover:shadow-2xl hover:-translate-y-2 ${
+                    gift.selected ? "ring-4 ring-wedding-primary scale-105" : ""
+                  }`}
+                  onClick={() => handleGiftSelect(gift.id)}
+                >
+                  <div className="relative">
+                    <img
+                      src={gift.imageUrl}
+                      alt={gift.name}
+                      className="w-full h-48 object-cover"
+                    />
+                    {gift.selected && (
+                      <div className="absolute inset-0 bg-wedding-primary/20 flex items-center justify-center">
+                        <div className="bg-wedding-primary rounded-full p-3">
+                          <Check className="h-8 w-8 text-white" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold text-wedding-dark mb-2">
+                      {gift.name}
+                    </h3>
+                    <p className="text-2xl font-bold text-wedding-primary">
+                      R$ {gift.price}
+                    </p>
+                  </div>
+                </div>
+              ))}
+        </div>
+
+        <div className="flex justify-center items-center space-x-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md text-wedding-primary hover:bg-wedding-primary/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <span className="text-lg font-semibold text-wedding-primary">
+            Página {currentPage} de {totalPages}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md text-wedding-primary hover:bg-wedding-primary/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
         </div>
 
         {(gifts.some((gift) => gift.selected) || selectedCustom) && (
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 mb-8 shadow-xl animate-slide-up">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 my-8 shadow-xl animate-slide-up">
             <h3 className="text-2xl font-semibold text-wedding-primary mb-6 text-center">
               Personalizar Presente (Opcional)
             </h3>
@@ -242,9 +328,17 @@ const GiftPage = () => {
             {!preferenceId ? (
               <button
                 onClick={handleCheckout}
-                className="bg-wedding-primary text-white px-12 py-4 rounded-full text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                disabled={checkoutLoading}
+                className="bg-wedding-primary text-white px-12 py-4 rounded-full text-lg font-semibold hover:bg-wedding-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Finalizar Presente
+                {checkoutLoading ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="animate-spin h-5 w-5 mr-3" />
+                    <span>Processando...</span>
+                  </div>
+                ) : (
+                  "Finalizar Presente"
+                )}
               </button>
             ) : (
               <Wallet initialization={{ preferenceId }} />
