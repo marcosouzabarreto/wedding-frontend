@@ -1,12 +1,12 @@
 export interface RSVP {
-  ID: string;
+  id: string;
   willAttend: boolean;
   dietaryRestrictions?: string;
   message?: string;
 }
 
 export interface FamilyMember {
-  ID: string;
+  id: string;
   name: string;
   familyName: string;
   isMainContact: boolean;
@@ -15,7 +15,7 @@ export interface FamilyMember {
 }
 
 export interface Family {
-  ID: string;
+  id: string;
   familyName: string;
   token: string;
   email: string;

@@ -101,12 +101,12 @@ const RSVPPage = () => {
 
   const handleMemberToggle = (member: FamilyMember) => {
     setSelectedGuests((prev) => {
-      const isSelected = prev.some((m) => m.ID === member.ID);
+      const isSelected = prev.some((m) => m.id === member.id);
       if (isSelected) {
-        return prev.filter((m) => m.ID !== member.ID);
+        return prev.filter((m) => m.id !== member.id);
       } else {
         const originalMember = currentFamily?.guests.find(
-          (m) => m.ID === member.ID,
+          (m) => m.id === member.id,
         );
         return [
           ...prev,
@@ -130,12 +130,12 @@ const RSVPPage = () => {
   ) => {
     setSelectedGuests((prev) =>
       prev.map((member) =>
-        member.ID === memberId
+        member.id === memberId
           ? {
               ...member,
               rsvp: {
                 ...(member.rsvp ?? {
-                  ID: memberId,
+                  id: memberId,
                   willAttend: false,
                 }),
                 dietaryRestrictions: dietary,
@@ -177,9 +177,9 @@ const RSVPPage = () => {
       phone: formData.phone,
       message: formData.message,
       guests: (currentFamily.guests || []).map((member) => {
-        const selected = selectedGuests.find((m) => m.ID === member.ID);
+        const selected = selectedGuests.find((m) => m.id === member.id);
         return {
-          guestId: member.ID,
+          guestId: member.id,
           willAttend: !!selected,
           dietaryRestrictions: selected?.rsvp?.dietaryRestrictions || "",
         };
@@ -232,7 +232,7 @@ const RSVPPage = () => {
               {selectedGuests.length > 0 ? (
                 selectedGuests.map((member) => (
                   <p
-                    key={member.ID}
+                    key={member.id}
                     className="flex items-center justify-center"
                   >
                     <Check className="h-4 w-4 text-green-500 mr-2" />
@@ -351,14 +351,14 @@ const RSVPPage = () => {
             <div className="space-y-4 mb-8">
               {(currentFamily.guests || []).map((member) => {
                 const isSelected = selectedGuests.some(
-                  (m) => m.ID === member.ID,
+                  (m) => m.id === member.id,
                 );
                 const selectedMember = selectedGuests.find(
-                  (m) => m.ID === member.ID,
+                  (m) => m.id === member.id,
                 );
                 return (
                   <div
-                    key={member.ID}
+                    key={member.id}
                     className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
                       isSelected
                         ? "border-wedding-primary bg-wedding-secondary/20"
@@ -403,7 +403,7 @@ const RSVPPage = () => {
                           }
                           onChange={(e) => {
                             updateMemberDietaryRestrictions(
-                              member.ID,
+                              member.id,
                               e.target.value,
                             );
                           }}
@@ -464,7 +464,7 @@ const RSVPPage = () => {
                 <div className="space-y-1">
                   {selectedGuests.map((member) => (
                     <div
-                      key={member.ID}
+                      key={member.id}
                       className="flex items-center justify-between text-sm"
                     >
                       <span>
