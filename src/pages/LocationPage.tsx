@@ -23,16 +23,16 @@ const LocationPage: React.FC = () => {
           {/* Map (bigger) */}
           <div className="flex-1 w-full h-[500px]">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.0900000000004!2d-40.510000000000005!3d-11.180000000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7142f1e000000001%3A0x7142f1e000000001!2sArena%20Regis%20Brindes!5e0!3m2!1spt-BR!2sbr!4v1678900000000!5m2!1spt-BR!2sbr"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3914.002408206344!2d-40.564205124952124!3d-11.18745698898743!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x76cf568f6309059%3A0x3a0447cfddfaa62f!2sEspa%C3%A7o%2FCampo%20R%C3%A9gis%20Brindes!5e0!3m2!1sen!2sbr!4v1756650245071!5m2!1sen!2sbr"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen={true}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Arena Regis Brindes Location"
+              title="Espaço/Campo Régis Brindes Location"
               className="rounded-lg shadow-lg"
-            ></iframe>
+            />
           </div>
 
           {/* Event Info Card (smaller, centered vertically) */}
@@ -65,7 +65,9 @@ const LocationPage: React.FC = () => {
 
       {/* Hospedagem section unchanged */}
       <section>
-        <h2 className="text-3xl font-semibold text-wedding-navy mb-4">Opções de Hospedagem</h2>
+        <h2 className="text-3xl font-semibold text-wedding-navy mb-4">
+          Opções de Hospedagem
+        </h2>
         <p className="text-lg mb-6 text-wedding-dark">
           Para sua comodidade, sugerimos alguns hotéis próximos ao local da
           celebração:
