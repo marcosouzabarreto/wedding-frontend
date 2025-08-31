@@ -17,7 +17,7 @@ const HomePage = () => {
     <div>
       {/* Hero Photo Section */}
       <section
-        className="relative flex h-[96vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
+        className="relative flex h-[86vh] md:h-[96vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
         style={{
           backgroundImage: `url(${hero})`,
         }}
