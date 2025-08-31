@@ -4,9 +4,7 @@ import Countdown from "../components/Countdown";
 import PhotoCarousel from "../components/PhotoCarousel";
 import PhotoGallery from "../components/PhotoGallery";
 import WeddingPartyCarousel from "../components/WeddingPartyCarousel";
-import ProgressiveBackground from "../components/ProgressiveBackground";
-import hero from "../assets/hero.jpg?w=1920&h=1080&format=webp";
-import heroPlaceholder from "../assets/hero.jpg?w=20&h=11&format=webp&blur=5";
+import hero from "../assets/hero.jpg";
 
 const HomePage = () => {
   const weddingDate = new Date("2025-12-06T16:00:00");
@@ -18,24 +16,29 @@ const HomePage = () => {
   return (
     <div>
       {/* Hero Photo Section */}
-      <ProgressiveBackground
-        src={hero}
-        placeholder={heroPlaceholder}
-        className="relative flex h-[94vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
+      <section
+        className="relative flex h-[96vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
+        style={{
+          backgroundImage: `url(${hero})`,
+        }}
       >
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="relative z-10 mt-80 animate-fade-in">
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+        {/* Hero Text */}
+        <div className="absolute bottom-20 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center px-4">
           <Heart className="mx-auto mb-6 h-16 w-16 animate-pulse-soft text-white" />
           <h1 className="mb-4 font-script text-4xl text-white md:text-6xl">
             Marco & Lavinia
           </h1>
           <p className="mb-8 text-lg text-gray-200 md:text-xl">vão se casar!</p>
         </div>
+        {/* Scroll indicator */}
         <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 animate-bounce text-white">
           <ChevronDown className="h-8 w-8" />
         </div>
-      </ProgressiveBackground>
+      </section>
 
+      {/* Countdown Section */}
       <section className="relative px-4 pt-20 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="animate-slide-up">

@@ -2,11 +2,9 @@ import React from "react";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import ProgressiveImage from "../components/ProgressiveImage";
 
-// Import images for Hotel Serra do Ouro
 import serraDoOuroImg from "../assets/hotels/serra-do-ouro.jpg?w=1024&h=768&format=webp";
 import serraDoOuroPlaceholder from "../assets/hotels/serra-do-ouro.jpg?w=20&h=15&format=webp&blur=5";
 
-// Import images for Fiesta
 import fiestaImg from "../assets/hotels/fiesta.jpg?w=1024&h=768&format=webp";
 import fiestaPlaceholder from "../assets/hotels/fiesta.jpg?w=20&h=15&format=webp&blur=5";
 
