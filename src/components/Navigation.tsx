@@ -10,7 +10,7 @@ const Navigation = () => {
     { path: "/", label: "Início" },
     { path: "/gifts", label: "Lista de Presentes" },
     { path: "/location", label: "Localização" },
-    { path: "/rsvp", label: "RSVP" },
+    { path: "/rsvp", label: "Confirmar Presença" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
