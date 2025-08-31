@@ -4,10 +4,6 @@ import Countdown from "../components/Countdown";
 import PhotoCarousel from "../components/PhotoCarousel";
 import PhotoGallery from "../components/PhotoGallery";
 import WeddingPartyCarousel from "../components/WeddingPartyCarousel";
-import ProgressiveBackground from "../components/ProgressiveBackground";
-
-// Import hero with vite-imagetools (full + tiny)
-import hero from "/assets/hero.jpg?w=1200;20&format=webp&as=srcset";
 
 const HomePage = () => {
   const weddingDate = new Date("2025-12-06T16:00:00");
@@ -19,29 +15,25 @@ const HomePage = () => {
   return (
     <div>
       {/* Hero Photo Section */}
-      <section className="relative h-[94vh] flex items-center justify-center text-center">
-        <ProgressiveBackground
-          src={hero[0].src}
-          placeholder={hero[1].src}
-          className="absolute inset-0"
-        >
-          <div className="absolute inset-0 bg-black/30" />
-          <div className="mt-80 animate-fade-in">
-            <Heart className="mx-auto mb-6 h-16 w-16 animate-pulse-soft text-white" />
-            <h1 className="mb-4 font-script text-4xl text-white md:text-6xl">
-              Marco & Lavinia
-            </h1>
-            <p className="mb-8 text-lg text-gray-200 md:text-xl">
-              vão se casar!
-            </p>
-          </div>
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-white">
-            <ChevronDown className="h-8 w-8" />
-          </div>
-        </ProgressiveBackground>
+      <section
+        className="relative flex h-[94vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
+        style={{
+          backgroundImage: `url(/assets/hero.jpg)`,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-10 mt-80 animate-fade-in">
+          <Heart className="mx-auto mb-6 h-16 w-16 animate-pulse-soft text-white" />
+          <h1 className="mb-4 font-script text-4xl text-white md:text-6xl">
+            Marco & Lavinia
+          </h1>
+          <p className="mb-8 text-lg text-gray-200 md:text-xl">vão se casar!</p>
+        </div>
+        <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 animate-bounce text-white">
+          <ChevronDown className="h-8 w-8" />
+        </div>
       </section>
 
-      {/* Countdown Section */}
       <section className="relative px-4 pt-20 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="animate-slide-up">
@@ -147,7 +139,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Closing Section */}
       <section className="py-16 px-4 bg-white/40 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-8">
