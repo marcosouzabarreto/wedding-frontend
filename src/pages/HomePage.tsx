@@ -17,7 +17,7 @@ const HomePage = () => {
     <div>
       {/* Hero Photo Section */}
       <section
-        className="relative flex h-[86vh] md:h-[96vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
+        className="relative flex h-[80vh] md:h-[92vh] items-center justify-center bg-cover bg-center bg-no-repeat md:bg-fixed text-center"
         style={{
           backgroundImage: `url(${hero})`,
         }}
@@ -25,7 +25,7 @@ const HomePage = () => {
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/40" />
         {/* Hero Text */}
-        <div className="absolute bottom-20 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center px-4">
+        <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center px-4">
           <Heart className="mx-auto mb-6 h-16 w-16 animate-pulse-soft text-white" />
           <h1 className="mb-4 font-script text-4xl text-white md:text-6xl">
             Marco & Lavinia
@@ -33,7 +33,7 @@ const HomePage = () => {
           <p className="mb-8 text-lg text-gray-200 md:text-xl">vão se casar!</p>
         </div>
         {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 animate-bounce text-white">
+        <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 animate-bounce text-white">
           <ChevronDown className="h-8 w-8" />
         </div>
       </section>
