@@ -93,10 +93,10 @@ const HomePage = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-4">
-              Nossa Jornada Juntos
+              Ensaio Pré-Wedding
             </h2>
             <p className="text-lg text-wedding-dark max-w-2xl mx-auto">
-              Momentos especiais que marcaram nossa história de amor
+              Dia especial que marcou nossa história de amor
             </p>
           </div>
           <div className="animate-slide-up">
