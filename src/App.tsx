@@ -1,10 +1,10 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import GiftPage from './pages/GiftPage';
 import RSVPPage from './pages/RSVPPage';
 import GiftPaymentStatusPage from './pages/GiftPaymentStatusPage';
+import LocationPage from './pages/LocationPage';
 
 function App() {
   return (
@@ -16,6 +16,7 @@ function App() {
           <Route path="/gifts" element={<GiftPage />} />
           <Route path="/rsvp" element={<RSVPPage />} />
           <Route path="/gift-payment-status" element={<GiftPaymentStatusPage />} />
+          <Route path="/location" element={<LocationPage />} />
         </Routes>
       </div>
     </Router>

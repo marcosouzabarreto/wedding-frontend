@@ -13,13 +13,12 @@ const HomePage = () => {
   );
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Hero Photo Section */}
       <section
         className="relative flex h-[94vh] items-center justify-center bg-cover bg-center md:bg-fixed text-center"
         style={{
-          backgroundImage:
-            `url(/assets/hero.jpg)`,
+          backgroundImage: `url(/assets/hero.jpg)`,
         }}
       >
         <div className="absolute inset-0 bg-black/30" />
@@ -28,9 +27,7 @@ const HomePage = () => {
           <h1 className="mb-4 font-script text-4xl text-white md:text-6xl">
             Marco & Lavinia
           </h1>
-          <p className="mb-8 text-lg text-gray-200 md:text-xl">
-            vão se casar!
-          </p>
+          <p className="mb-8 text-lg text-gray-200 md:text-xl">vão se casar!</p>
         </div>
         <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 animate-bounce text-white">
           <ChevronDown className="h-8 w-8" />
@@ -39,7 +36,6 @@ const HomePage = () => {
 
       <section className="relative px-4 pt-20 text-center">
         <div className="max-w-4xl mx-auto">
-
           <div className="animate-slide-up">
             <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-12">
               Contagem Regressiva para o Grande Dia
@@ -115,7 +111,8 @@ const HomePage = () => {
               Nossa Galeria de Memórias
             </h2>
             <p className="text-lg text-wedding-dark max-w-2xl mx-auto">
-              Uma jornada através dos anos, desde a infância até nos tornarmos o casal que somos hoje
+              Uma jornada através dos anos, desde a infância até nos tornarmos o
+              casal que somos hoje
             </p>
           </div>
           <div className="animate-slide-up">
@@ -132,36 +129,12 @@ const HomePage = () => {
               Nossos Padrinhos e Madrinhas
             </h2>
             <p className="text-lg text-wedding-dark max-w-2xl mx-auto">
-              As pessoas especiais que escolhemos para estar ao nosso lado neste momento único
+              As pessoas especiais que escolhemos para estar ao nosso lado neste
+              momento único
             </p>
           </div>
           <div className="animate-slide-up">
-            <WeddingPartyCarousel
-              bestMenPhotos={[
-                "/assets/best-men-and-bridesmaids/best-men/Arthur.jpeg",
-                "/assets/best-men-and-bridesmaids/best-men/Dindá.png",
-                "/assets/best-men-and-bridesmaids/best-men/João.png",
-                "/assets/best-men-and-bridesmaids/best-men/Luan.jpeg",
-                "/assets/best-men-and-bridesmaids/best-men/Vander.jpeg",
-                "/assets/best-men-and-bridesmaids/best-men/Victor.png",
-                "/assets/best-men-and-bridesmaids/best-men/Vitinho.jpeg",
-              ]}
-              bridesmaidPhotos={[
-                "/assets/best-men-and-bridesmaids/bridesmaid/Ana Paula.png",
-                "/assets/best-men-and-bridesmaids/bridesmaid/Aninha.jpeg",
-                "/assets/best-men-and-bridesmaids/bridesmaid/Clarinha.jpeg",
-                "/assets/best-men-and-bridesmaids/bridesmaid/Nanda.jpeg",
-                "/assets/best-men-and-bridesmaids/bridesmaid/Rai.jpg",
-                "/assets/best-men-and-bridesmaids/bridesmaid/Thai.jpeg",
-                "/assets/best-men-and-bridesmaids/bridesmaid/Yanca.jpeg",
-              ]}
-              couplesPhotos={[
-                "/assets/best-men-and-bridesmaids/couples/Adriel e Josi.jpeg",
-                "/assets/best-men-and-bridesmaids/couples/Luiza e Felipe.png",
-                "/assets/best-men-and-bridesmaids/couples/Mari e Dom.jpeg",
-                "/assets/best-men-and-bridesmaids/couples/Nisme e Ian.jpeg",
-              ]}
-            />
+            <WeddingPartyCarousel />
           </div>
         </div>
       </section>
@@ -169,20 +142,18 @@ const HomePage = () => {
       <section className="py-16 px-4 bg-white/40 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-semibold text-wedding-primary mb-8">
-            Nossa História de Amor
+            O Grande Dia
           </h2>
           <div className="prose prose-lg mx-auto text-wedding-dark">
-            <p className="text-lg leading-relaxed mb-6">
-              Desde o momento em que nos conhecemos naquela cafeteria
-              aconchegante há três anos, soubemos que algo especial estava
-              começando. Através de aventuras, risadas e inúmeros sonhos
-              compartilhados, nosso amor cresceu mais forte a cada dia.
+            <p className="text-xl leading-relaxed mb-6">
+              Queridos amigos e familiares
             </p>
             <p className="text-lg leading-relaxed">
-              Agora, estamos animados para dar o próximo passo em nossa jornada
-              juntos, cercados pelo amor e apoio de nossa família e amigos.
-              Junte-se a nós enquanto dizemos "Sim" e começamos nossa maior
-              aventura!
+              É uma honra tê-los conosco neste momento especial. Estamos muito
+              felizes em compartilhar nossa história com cada um. Espero que
+              aproveitem bastante, se divirtam e se emocionem, pois será um
+              evento especial, com pessoas especiais. Que Deus abençoe cada um
+              de vocês.
             </p>
           </div>
         </div>

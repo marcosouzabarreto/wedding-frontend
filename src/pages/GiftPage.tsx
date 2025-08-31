@@ -49,7 +49,7 @@ const GiftPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("asc");
-  const giftsPerPage = 8;
+  const giftsPerPage = 9;
 
   useEffect(() => {
     const fetchGifts = async () => {
@@ -146,7 +146,7 @@ const GiftPage = () => {
   const totalPages = Math.ceil(sortedGifts.length / giftsPerPage);
 
   return (
-    <div className="min-h-screen py-16 px-4">
+    <div className="py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12 animate-fade-in">
           <Gift className="h-16 w-16 text-wedding-primary mx-auto mb-6" />

@@ -215,7 +215,7 @@ const RSVPPage = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen py-16 px-4 flex items-center justify-center">
+      <div className="py-16 px-4 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center animate-fade-in">
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl">
             <Heart className="h-16 w-16 text-wedding-primary mx-auto mb-6 animate-bounce-gentle" />
@@ -256,7 +256,7 @@ const RSVPPage = () => {
   }
 
   return (
-    <div className="min-h-screen py-16 px-4">
+    <div className="py-16 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12 animate-fade-in">
           <Send className="h-16 w-16 text-wedding-primary mx-auto mb-6" />

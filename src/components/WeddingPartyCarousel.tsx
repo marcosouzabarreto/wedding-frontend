@@ -1,56 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Heart, Users } from "lucide-react";
+import { weddingParty } from "./weddingPartyData";
 
-interface WeddingPartyMember {
-  id: number;
-  name: string;
-  role: string;
-  photo: string;
-  description: string;
-  relationship: string;
-}
-
-interface WeddingPartyCarouselProps {
-  bestMenPhotos: string[];
-  bridesmaidPhotos: string[];
-  couplesPhotos: string[];
-}
-
-const WeddingPartyCarousel = ({
-  bestMenPhotos,
-  bridesmaidPhotos,
-  couplesPhotos,
-}: WeddingPartyCarouselProps) => {
+const WeddingPartyCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [displayedItemsPerSlide, setDisplayedItemsPerSlide] = useState(1);
-
-  const weddingParty: WeddingPartyMember[] = [
-    ...bestMenPhotos.map((photo, index) => ({
-      id: index + 1,
-      name: photo.split("/").pop()?.split(".")[0] || `Padrinho ${index + 1}`,
-      role: "bestman",
-      photo,
-      description: "",
-      relationship: "",
-    })),
-    ...bridesmaidPhotos.map((photo, index) => ({
-      id: bestMenPhotos.length + index + 1,
-      name: photo.split("/").pop()?.split(".")[0] || `Madrinha ${index + 1}`,
-      role: "bridesmaid",
-      photo,
-      description: "",
-      relationship: "",
-    })),
-    ...couplesPhotos.map((photo, index) => ({
-      id: bestMenPhotos.length + bridesmaidPhotos.length + index + 1,
-      name: photo.split("/").pop()?.split(".")[0] || `Casal ${index + 1}`,
-      role: "couple",
-      photo,
-      description: "",
-      relationship: "",
-    })),
-  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -90,25 +45,18 @@ const WeddingPartyCarousel = ({
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
 
-  const handleMouseEnter = () => {
-    setIsAutoPlaying(false);
-  };
-
-  const handleMouseLeave = () => {
-    setIsAutoPlaying(true);
-  };
+  const handleMouseEnter = () => setIsAutoPlaying(false);
+  const handleMouseLeave = () => setIsAutoPlaying(true);
 
   return (
     <>
+      {/* Header with counts */}
       <div className="text-center mb-8">
         <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-4 mb-4">
           <div className="flex items-center space-x-2">
             <Users className="h-6 w-6 text-wedding-primary" />
             <span className="text-base sm:text-lg font-semibold text-wedding-primary text-center">
-              {
-                weddingParty.filter((member) => member.role === "bestman")
-                  .length
-              }{" "}
+              {weddingParty.filter((m) => m.role === "bestman").length}{" "}
               Padrinhos
             </span>
           </div>
@@ -116,10 +64,7 @@ const WeddingPartyCarousel = ({
           <div className="flex items-center space-x-2">
             <Users className="h-6 w-6 text-wedding-primary" />
             <span className="text-base sm:text-lg font-semibold text-wedding-primary text-center">
-              {
-                weddingParty.filter((member) => member.role === "bridesmaid")
-                  .length
-              }{" "}
+              {weddingParty.filter((m) => m.role === "bridesmaid").length}{" "}
               Madrinhas
             </span>
           </div>
@@ -127,16 +72,18 @@ const WeddingPartyCarousel = ({
           <div className="flex items-center space-x-2">
             <Users className="h-6 w-6 text-wedding-primary" />
             <span className="text-base sm:text-lg font-semibold text-wedding-primary text-center">
-              {weddingParty.filter((member) => member.role === "couple").length}{" "}
-              Casais
+              {weddingParty.filter((m) => m.role === "couple").length} Casais
             </span>
           </div>
         </div>
       </div>
 
-      {/* Carousel Container */}
-      <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        {/* Main Carousel */}
+      {/* Carousel */}
+      <div
+        className="relative"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         <div className="overflow-hidden rounded-2xl">
           <div
             className="flex transition-transform duration-500 ease-in-out"
@@ -158,11 +105,10 @@ const WeddingPartyCarousel = ({
                         {/* Photo */}
                         <div className="relative h-64 overflow-hidden">
                           <img
-                            src={member.photo}
+                            src={member.photoUrl}
                             alt={member.name}
                             className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                           />
-                          {/* Role Badge */}
                           <div
                             className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold text-white ${
                               member.role === "bestman"
@@ -200,13 +146,13 @@ const WeddingPartyCarousel = ({
           </div>
         </div>
 
+        {/* Controls */}
         <button
           onClick={prevSlide}
           className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-wedding-primary p-3 rounded-full transition-all duration-300 hover:scale-110 z-10"
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
-
         <button
           onClick={nextSlide}
           className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-wedding-primary p-3 rounded-full transition-all duration-300 hover:scale-110 z-10"
@@ -215,6 +161,7 @@ const WeddingPartyCarousel = ({
         </button>
       </div>
 
+      {/* Dots */}
       <div className="flex justify-center mt-6 space-x-2">
         {Array.from({ length: totalSlides }).map((_, index) => (
           <button
