@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ProgressiveImageProps {
   src: string;
@@ -15,6 +15,14 @@ const ProgressiveImage = ({
 }: ProgressiveImageProps) => {
   const [loaded, setLoaded] = useState(false);
 
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      setLoaded(true);
+    };
+  }, [src]);
+
   return (
     <div className={`relative overflow-hidden ${className || ""}`}>
       {/* Blurry placeholder */}
@@ -30,7 +38,6 @@ const ProgressiveImage = ({
       <img
         src={src}
         alt={alt}
-        onLoad={() => setLoaded(true)}
         className={`w-full h-full object-cover transition-opacity duration-700 ${
           loaded ? "opacity-100" : "opacity-0"
         }`}

@@ -49,7 +49,7 @@ const GiftPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("asc");
-  const giftsPerPage = 9;
+  const giftsPerPage = 8;
 
   useEffect(() => {
     const fetchGifts = async () => {

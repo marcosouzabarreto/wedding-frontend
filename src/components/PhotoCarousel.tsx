@@ -1,39 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
-
-interface Photo {
-  id: number;
-  url: string;
-}
+import { photos } from "./photoCarouselData";
+import ProgressiveImage from "./ProgressiveImage";
 
 const PhotoCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  const photos: Photo[] = [
-    { id: 1, url: "/assets/pre-wedding/IMG_8003.jpg" },
-    { id: 2, url: "/assets/pre-wedding/IMG_8006.jpg" },
-    { id: 3, url: "/assets/pre-wedding/IMG_8013.jpg" },
-    { id: 4, url: "/assets/pre-wedding/IMG_8025.jpg" },
-    { id: 5, url: "/assets/pre-wedding/IMG_8051.jpg" },
-    { id: 6, url: "/assets/pre-wedding/IMG_8055.jpg" },
-    { id: 7, url: "/assets/pre-wedding/IMG_8078.jpg" },
-    { id: 8, url: "/assets/pre-wedding/IMG_8094.jpg" },
-    { id: 9, url: "/assets/pre-wedding/IMG_8118.jpg" },
-    { id: 10, url: "/assets/pre-wedding/IMG_8121.jpg" },
-    { id: 11, url: "/assets/pre-wedding/IMG_8131-2.jpg" },
-    { id: 12, url: "/assets/pre-wedding/IMG_8131.jpg" },
-    { id: 13, url: "/assets/pre-wedding/IMG_8155-2.jpg" },
-    { id: 14, url: "/assets/pre-wedding/IMG_8155.jpg" },
-    { id: 15, url: "/assets/pre-wedding/IMG_8179.jpg" },
-    { id: 16, url: "/assets/pre-wedding/IMG_8230.jpg" },
-    { id: 17, url: "/assets/pre-wedding/IMG_8263.jpg" },
-    { id: 18, url: "/assets/pre-wedding/IMG_8291.jpg" },
-    { id: 19, url: "/assets/pre-wedding/IMG_8326.jpg" },
-    { id: 20, url: "/assets/pre-wedding/IMG_8337.jpg" },
-    { id: 21, url: "/assets/pre-wedding/IMG_8367.jpg" },
-    { id: 22, url: "/assets/pre-wedding/IMG_8377.jpg" },
-  ];
 
   const changeSlide = useCallback(
     (newIndex: number) => {
@@ -82,8 +54,9 @@ const PhotoCarousel = () => {
           >
             {photos.map((photo) => (
               <div key={photo.id} className="w-full h-full flex-shrink-0">
-                <img
-                  src={photo.url}
+                <ProgressiveImage
+                  src={photo.src}
+                  placeholder={photo.placeholder}
                   alt="Pre-wedding photo"
                   className={"w-full h-full object-cover"}
                 />

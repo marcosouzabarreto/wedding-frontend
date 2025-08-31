@@ -1,5 +1,14 @@
 import React from "react";
 import { Calendar, Clock, MapPin } from "lucide-react";
+import ProgressiveImage from "../components/ProgressiveImage";
+
+// Import images for Hotel Serra do Ouro
+import serraDoOuroImg from "../assets/hotels/serra-do-ouro.jpg?w=1024&h=768&format=webp";
+import serraDoOuroPlaceholder from "../assets/hotels/serra-do-ouro.jpg?w=20&h=15&format=webp&blur=5";
+
+// Import images for Fiesta
+import fiestaImg from "../assets/hotels/fiesta.jpg?w=1024&h=768&format=webp";
+import fiestaPlaceholder from "../assets/hotels/fiesta.jpg?w=20&h=15&format=webp&blur=5";
 
 const LocationPage: React.FC = () => {
   return (
@@ -86,8 +95,9 @@ const LocationPage: React.FC = () => {
               <strong>Diária:</strong> R$ 310,00 (Booking.com)
             </p>
             <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">
-              <img
-                src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/109968329.jpg?k=eece059f716e0363e81aba80b5b4e24b7efd72354a2bcaa83473f128605b072c&o=&hp=1"
+              <ProgressiveImage
+                src={serraDoOuroImg}
+                placeholder={serraDoOuroPlaceholder}
                 alt="Hotel Serra do Ouro"
                 className="w-full h-full object-cover"
               />
@@ -106,8 +116,9 @@ const LocationPage: React.FC = () => {
               <strong>Diária:</strong> R$ 343,00 (Booking.com)
             </p>
             <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">
-              <img
-                src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/110154426.jpg?k=ca9b8560103455c5605969da1fedeab07a3320f06308299194d1a5445f0c3629&o=&hp=1"
+              <ProgressiveImage
+                src={fiestaImg}
+                placeholder={fiestaPlaceholder}
                 alt="Hotel Fiesta"
                 className="w-full h-full object-cover"
               />

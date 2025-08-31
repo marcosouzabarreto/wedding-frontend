@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Heart, Users } from "lucide-react";
 import { weddingParty } from "./weddingPartyData";
+import ProgressiveImage from "./ProgressiveImage";
 
 const WeddingPartyCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -104,8 +105,9 @@ const WeddingPartyCarousel = () => {
                       >
                         {/* Photo */}
                         <div className="relative h-64 overflow-hidden">
-                          <img
-                            src={member.photoUrl}
+                          <ProgressiveImage
+                            src={member.photo}
+                            placeholder={member.placeholder}
                             alt={member.name}
                             className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                           />

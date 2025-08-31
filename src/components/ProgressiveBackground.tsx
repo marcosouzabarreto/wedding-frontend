@@ -37,7 +37,7 @@ const ProgressiveBackground = ({
         style={{ backgroundImage: `url(${src})` }}
       />
 
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-10 h-full w-full">{children}</div>
     </div>
   );
 };
